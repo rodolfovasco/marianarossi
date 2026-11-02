@@ -1,91 +1,88 @@
 ---
-// Bento, o ursinho da Tia Mari. Original, desenhado em SVG.
+// Bento, o ursinho da Tia Mari. Original, desenhado em SVG (estilo fofinho).
 interface Props { size?: number; wave?: boolean; still?: boolean; class?: string; holding?: 'heart' | 'letter' }
 const { size = 200, wave = true, still = false, class: cls = '', holding = 'heart' } = Astro.props;
-const INK = '#3B2F45';
-const FUR = '#D9996A';
-const FUR_D = '#C98A5B';
-const CREAM = '#F6D6BC';
-const PATCH = '#7A4E35';
+const LINE = '#8A4A2E';
+const FUR = '#C9A27E';
+const LIGHT = '#E6D2BD';
+const SHADOW = '#EEDFCF';
+const NOSE = '#A5674A';
+const SW = 3.2;
 ---
 <svg class={`bento ${wave ? 'bento-wave' : ''} ${still ? 'bento-still' : ''} ${cls}`} width={size} height={size * 1.1} viewBox="0 0 200 220" role="img" aria-label="Bento, o ursinho mascote da Tia Mari">
   <g class="bento-body">
-    <!-- sombra -->
-    <ellipse cx="62" cy="217" rx="26" ry="3.5" fill={INK} opacity="0.18" />
-    <ellipse cx="138" cy="217" rx="26" ry="3.5" fill={INK} opacity="0.18" />
-
-    <!-- corpo sentado -->
-    <path d="M58 150 C 46 172, 46 200, 70 206 L 130 206 C 154 200, 154 172, 142 150 C 128 140, 72 140, 58 150 Z" fill={FUR} stroke={INK} stroke-width="5" stroke-linejoin="round" />
-    <path d="M78 158 C 74 176, 78 196, 100 198 C 122 196, 126 176, 122 158 C 112 152, 88 152, 78 158 Z" fill={CREAM} />
-
-    <!-- item no colo -->
-    {holding === 'heart' ? (
-      <path d="M100 192 C 86 182, 84 170, 92 166 C 96 164, 99 167, 100 170 C 101 167, 104 164, 108 166 C 116 170, 114 182, 100 192 Z" fill="#D63A63" stroke={INK} stroke-width="3" stroke-linejoin="round" />
-    ) : (
-      <g transform="rotate(-6 100 178)">
-        <rect x="78" y="162" width="44" height="30" rx="6" fill="#fff" stroke={INK} stroke-width="3" />
-        <path d="M80 165 L100 180 L120 165" fill="none" stroke={INK} stroke-width="3" stroke-linejoin="round" />
-        <circle cx="100" cy="183" r="4" fill="#D63A63" />
-      </g>
-    )}
-
-    <!-- pernas e patinhas -->
-    <circle cx="62" cy="194" r="22" fill={FUR} stroke={INK} stroke-width="5" />
-    <ellipse cx="60" cy="199" rx="11" ry="9" fill={PATCH} />
-    <circle cx="50" cy="187" r="4" fill={PATCH} /><circle cx="59" cy="184" r="4" fill={PATCH} /><circle cx="68" cy="186" r="4" fill={PATCH} />
-    <circle cx="138" cy="194" r="22" fill={FUR} stroke={INK} stroke-width="5" />
-    <ellipse cx="140" cy="199" rx="11" ry="9" fill={PATCH} />
-    <circle cx="132" cy="186" r="4" fill={PATCH} /><circle cx="141" cy="184" r="4" fill={PATCH} /><circle cx="150" cy="187" r="4" fill={PATCH} />
-
-    <!-- braço esquerdo -->
-    <path d="M66 150 C 55 160, 53 176, 61 183 C 69 188, 76 182, 75 173 C 74 164, 77 157, 66 150 Z" fill={FUR_D} stroke={INK} stroke-width="4.5" stroke-linejoin="round" />
-
-    <!-- braço direito (acena) -->
-    <g class="bento-arm">
-      <path d="M134 150 C 145 160, 147 176, 139 183 C 131 188, 124 182, 125 173 C 126 164, 123 157, 134 150 Z" fill={FUR_D} stroke={INK} stroke-width="4.5" stroke-linejoin="round" />
+    <!-- sombra deslocada (efeito adesivo) -->
+    <g fill={SHADOW} transform="translate(5 4)">
+      <ellipse cx="50" cy="188" rx="36" ry="25" transform="rotate(-18 50 188)" />
+      <ellipse cx="150" cy="188" rx="36" ry="25" transform="rotate(18 150 188)" />
+      <ellipse cx="100" cy="160" rx="40" ry="42" />
+      <circle cx="46" cy="40" r="20" /><circle cx="155" cy="45" r="18" />
+      <ellipse cx="100" cy="80" rx="64" ry="56" />
     </g>
 
     <!-- orelhas -->
-    <circle cx="50" cy="46" r="25" fill={FUR} stroke={INK} stroke-width="5" />
-    <circle cx="56" cy="50" r="12" fill={PATCH} />
-    <circle cx="150" cy="46" r="25" fill={FUR} stroke={INK} stroke-width="5" />
-    <circle cx="144" cy="50" r="12" fill={PATCH} />
+    <circle cx="46" cy="40" r="20" fill={FUR} stroke={LINE} stroke-width={SW} />
+    <circle cx="48" cy="43" r="10" fill={LIGHT} stroke={LINE} stroke-width={SW * 0.8} />
+    <circle cx="155" cy="45" r="18" fill={FUR} stroke={LINE} stroke-width={SW} />
+    <circle cx="152" cy="47" r="9" fill={LIGHT} stroke={LINE} stroke-width={SW * 0.8} />
 
-    <!-- cabeça -->
-    <ellipse cx="100" cy="92" rx="64" ry="58" fill={FUR} stroke={INK} stroke-width="5" />
-    <!-- topetinho -->
-    <path d="M92 36 C 94 26, 102 22, 110 26 M 100 35 C 104 28, 110 27, 116 30" fill="none" stroke={INK} stroke-width="4" stroke-linecap="round" />
+    <!-- corpo -->
+    <path d="M66 128 C 56 148, 54 182, 68 198 L 132 198 C 146 182, 144 148, 134 128 C 120 116, 80 116, 66 128 Z" fill={FUR} stroke={LINE} stroke-width={SW} stroke-linejoin="round" />
+    <path d="M80 128 C 76 150, 76 178, 84 192 C 94 198, 106 198, 116 192 C 124 178, 124 150, 120 128 Z" fill={LIGHT} stroke={LINE} stroke-width={SW * 0.8} stroke-linejoin="round" />
 
-    <!-- bochechas -->
-    <circle cx="62" cy="118" r="10" fill="#FF8FAB" opacity="0.5" />
-    <circle cx="138" cy="118" r="10" fill="#FF8FAB" opacity="0.5" />
+    <!-- item no colo -->
+    {holding === 'heart' ? (
+      <path d="M100 178 C 89 170, 87 160, 93 157 C 96 155.5, 99 158, 100 160 C 101 158, 104 155.5, 107 157 C 113 160, 111 170, 100 178 Z" fill="#FF8FAB" stroke={LINE} stroke-width="2.4" stroke-linejoin="round" />
+    ) : (
+      <g transform="rotate(-6 100 170)">
+        <rect x="80" y="156" width="40" height="28" rx="6" fill="#fff" stroke={LINE} stroke-width="2.6" />
+        <path d="M82 159 L100 172 L118 159" fill="none" stroke={LINE} stroke-width="2.6" stroke-linejoin="round" />
+        <circle cx="100" cy="175" r="3.5" fill="#FF8FAB" />
+      </g>
+    )}
 
-    <!-- sobrancelhas -->
-    <path d="M64 74 Q 72 68 80 72" fill="none" stroke={INK} stroke-width="3.5" stroke-linecap="round" />
-    <path d="M120 72 Q 128 68 136 74" fill="none" stroke={INK} stroke-width="3.5" stroke-linecap="round" />
+    <!-- pernas abertas com almofadinhas -->
+    <ellipse cx="50" cy="188" rx="36" ry="25" transform="rotate(-18 50 188)" fill={FUR} stroke={LINE} stroke-width={SW} />
+    <ellipse cx="42" cy="194" rx="12" ry="10" transform="rotate(-18 42 194)" fill={LIGHT} stroke={LINE} stroke-width={SW * 0.8} />
+    <ellipse cx="26" cy="182" rx="5.5" ry="4.5" fill={LIGHT} stroke={LINE} stroke-width="2.2" />
+    <ellipse cx="34" cy="172" rx="5.5" ry="4.5" fill={LIGHT} stroke={LINE} stroke-width="2.2" />
+    <ellipse cx="46" cy="168" rx="5.5" ry="4.5" fill={LIGHT} stroke={LINE} stroke-width="2.2" />
 
-    <!-- olhos em manchinhas -->
-    <ellipse cx="73" cy="96" rx="15" ry="14" fill={PATCH} />
-    <ellipse cx="127" cy="96" rx="15" ry="14" fill={PATCH} />
-    <g class="bento-eyes">
-      <circle cx="74" cy="95" r="8.5" fill="#fff" />
-      <circle cx="126" cy="95" r="8.5" fill="#fff" />
-      <circle cx="75" cy="96" r="5" fill={INK} />
-      <circle cx="125" cy="96" r="5" fill={INK} />
-      <circle cx="77" cy="93.5" r="1.8" fill="#fff" />
-      <circle cx="127" cy="93.5" r="1.8" fill="#fff" />
+    <ellipse cx="150" cy="188" rx="36" ry="25" transform="rotate(18 150 188)" fill={FUR} stroke={LINE} stroke-width={SW} />
+    <ellipse cx="158" cy="194" rx="12" ry="10" transform="rotate(18 158 194)" fill={LIGHT} stroke={LINE} stroke-width={SW * 0.8} />
+    <ellipse cx="174" cy="182" rx="5.5" ry="4.5" fill={LIGHT} stroke={LINE} stroke-width="2.2" />
+    <ellipse cx="166" cy="172" rx="5.5" ry="4.5" fill={LIGHT} stroke={LINE} stroke-width="2.2" />
+    <ellipse cx="154" cy="168" rx="5.5" ry="4.5" fill={LIGHT} stroke={LINE} stroke-width="2.2" />
+
+    <!-- braço esquerdo -->
+    <path d="M70 130 C 58 140, 52 164, 57 180 C 60 190, 74 190, 76 180 C 78 166, 80 150, 80 134 Z" fill={FUR} stroke={LINE} stroke-width={SW} stroke-linejoin="round" />
+
+    <!-- braço direito (acena) -->
+    <g class="bento-arm">
+      <path d="M130 130 C 142 140, 148 164, 143 180 C 140 190, 126 190, 124 180 C 122 166, 120 150, 120 134 Z" fill={FUR} stroke={LINE} stroke-width={SW} stroke-linejoin="round" />
     </g>
 
+    <!-- cabeça -->
+    <path d="M38 84 C 34 46, 64 22, 102 24 C 140 24, 168 48, 164 86 C 162 116, 134 136, 100 136 C 64 136, 40 116, 38 84 Z" fill={FUR} stroke={LINE} stroke-width={SW} stroke-linejoin="round" />
     <!-- focinho -->
-    <path d="M100 96 L 124 108 C 130 126, 120 140, 100 140 C 80 140, 70 126, 76 108 Z" fill={CREAM} stroke={INK} stroke-width="4" stroke-linejoin="round" />
-    <ellipse cx="100" cy="114" rx="9.5" ry="7" fill={INK} />
-    <path d="M100 121 V 126 M 90 126 Q 95 132 100 126 Q 105 132 110 126" fill="none" stroke={INK} stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M70 108 C 70 96, 82 90, 100 90 C 118 90, 130 96, 130 108 C 130 122, 118 134, 100 134 C 82 134, 70 122, 70 108 Z" fill={LIGHT} />
 
-    <!-- curativo na bochecha (marca do Bento) -->
-    <g transform="rotate(-28 144 112)">
-      <rect x="130" y="106" width="30" height="12" rx="6" fill="#FFD7A3" stroke={INK} stroke-width="2.5" />
-      <rect x="140" y="106" width="10" height="12" fill="#FFE7C7" stroke={INK} stroke-width="2.5" />
-      <circle cx="143" cy="110" r="1.1" fill={INK} /><circle cx="147" cy="114" r="1.1" fill={INK} />
+    <!-- olhinhos fechados de felicidade -->
+    <g class="bento-eyes">
+      <path d="M64 84 Q 74 72 84 84" fill="none" stroke={LINE} stroke-width="3.6" stroke-linecap="round" />
+      <path d="M116 84 Q 126 72 136 84" fill="none" stroke={LINE} stroke-width="3.6" stroke-linecap="round" />
+    </g>
+    <!-- bochechas -->
+    <ellipse cx="58" cy="98" rx="10" ry="7" fill="#FF9DB5" opacity="0.85" />
+    <ellipse cx="142" cy="98" rx="10" ry="7" fill="#FF9DB5" opacity="0.85" />
+    <!-- nariz e boquinha -->
+    <path d="M92 94 Q 100 90 108 94 Q 107 102 100 104 Q 93 102 92 94 Z" fill={NOSE} stroke={LINE} stroke-width="2.4" stroke-linejoin="round" />
+    <path d="M94 110 Q 100 114 106 110" fill="none" stroke={LINE} stroke-width="2.4" stroke-linecap="round" />
+
+    <!-- curativo discreto (marca do Bento) -->
+    <g transform="rotate(-24 132 50)">
+      <rect x="120" y="45" width="26" height="10" rx="5" fill="#FFE1BF" stroke={LINE} stroke-width="2" />
+      <rect x="129" y="45" width="8" height="10" fill="#FFF0DC" stroke={LINE} stroke-width="2" />
     </g>
   </g>
 </svg>
@@ -93,13 +90,13 @@ const PATCH = '#7A4E35';
 <style>
   .bento { overflow: visible; }
   @media (prefers-reduced-motion: no-preference) {
-    .bento-eyes { transform-origin: 100px 95px; animation: blink 4.2s infinite; }
-    .bento-wave .bento-arm { transform-origin: 132px 156px; animation: wave 2.6s var(--spring) 0.8s 2; }
-    .bento:hover .bento-arm { transform-origin: 132px 156px; animation: wave 1.6s var(--spring) 1; }
+    .bento-eyes { transform-origin: 100px 80px; animation: smile 4.2s infinite; }
+    .bento-wave .bento-arm { transform-origin: 126px 134px; animation: wave 2.6s var(--spring) 0.8s 2; }
+    .bento:hover .bento-arm { transform-origin: 126px 134px; animation: wave 1.6s var(--spring) 1; }
     .bento-body { transform-origin: 100px 220px; animation: breathe 3.6s ease-in-out infinite; }
     .bento-still .bento-body, .bento-still .bento-arm, .bento-still:hover .bento-arm { animation: none; }
   }
-  @keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+  @keyframes smile { 0%, 90%, 100% { transform: translateY(0); } 94% { transform: translateY(-2px); } }
   @keyframes wave { 0%, 100% { transform: rotate(0); } 18% { transform: rotate(-125deg); } 34% { transform: rotate(-100deg); } 50% { transform: rotate(-128deg); } 66% { transform: rotate(-102deg); } 82% { transform: rotate(-120deg); } }
   @keyframes breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.012, 0.988); } }
 </style>
