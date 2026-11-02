@@ -1,9 +1,9 @@
 ---
 // Bento, o ursinho da Tia Mari. Original, desenhado em SVG.
-interface Props { size?: number; wave?: boolean; class?: string; holding?: 'heart' | 'letter' }
-const { size = 200, wave = true, class: cls = '', holding = 'heart' } = Astro.props;
+interface Props { size?: number; wave?: boolean; still?: boolean; class?: string; holding?: 'heart' | 'letter' }
+const { size = 200, wave = true, still = false, class: cls = '', holding = 'heart' } = Astro.props;
 ---
-<svg class={`bento ${wave ? 'bento-wave' : ''} ${cls}`} width={size} height={size * 1.1} viewBox="0 0 200 220" role="img" aria-label="Bento, o ursinho mascote da Tia Mari, acenando">
+<svg class={`bento ${wave ? 'bento-wave' : ''} ${still ? 'bento-still' : ''} ${cls}`} width={size} height={size * 1.1} viewBox="0 0 200 220" role="img" aria-label="Bento, o ursinho mascote da Tia Mari, acenando">
   <g class="bento-body">
     <!-- corpo -->
     <ellipse cx="100" cy="182" rx="52" ry="40" fill="#D9996A" />
@@ -62,6 +62,7 @@ const { size = 200, wave = true, class: cls = '', holding = 'heart' } = Astro.pr
     .bento-wave .bento-arm { transform-origin: 148px 168px; animation: wave 2.4s var(--spring) 0.8s 2; }
     .bento:hover .bento-arm { animation: wave 1.2s var(--spring) 1; }
     .bento-body { transform-origin: 100px 220px; animation: breathe 3.6s ease-in-out infinite; }
+    .bento-still .bento-body, .bento-still .bento-arm, .bento-still:hover .bento-arm { animation: none; }
   }
   @keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
   @keyframes wave { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-22deg); } 40% { transform: rotate(10deg); } 60% { transform: rotate(-18deg); } 80% { transform: rotate(6deg); } }
