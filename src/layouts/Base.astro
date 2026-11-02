@@ -1,0 +1,109 @@
+---
+import '../styles/global.css';
+import { site, url } from '../lib/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  jsonLd?: object;
+  type?: 'website' | 'article';
+}
+
+const { title, description = site.description, jsonLd, type = 'website' } = Astro.props;
+const pageTitle = title ? `${title} | ${site.name}` : `${site.name} — Medicina explicada com clareza`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(url('/og-image.jpg'), Astro.site);
+---
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{pageTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+  <link rel="sitemap" href={url('/sitemap-index.xml')} />
+  <meta name="theme-color" content="#FAF6F5" />
+  <meta property="og:type" content={type} />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:site_name" content={site.name} />
+  <meta property="og:title" content={title ?? pageTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <script is:inline>document.documentElement.classList.add('js');</script>
+  {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+</head>
+<body>
+  <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href={url('/')}>
+        <span class="brand-name">Mariana Rossi</span>
+        <span class="brand-sub">{site.role} · {site.crm}</span>
+      </a>
+      <nav class="nav" aria-label="Principal">
+        <a href={url('/artigos/')}>Artigos</a>
+        <a class="nav-hide" href={url('/#sobre')}>Sobre</a>
+        <a class="nav-hide" href={url('/#formacao')}>Formação</a>
+        <a class="nav-hide" href={url('/#duvidas')}>Dúvidas</a>
+        <a class="btn btn-primary btn-sm" href={url('/#receber')}>Receber artigos</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <slot />
+  </main>
+
+  <footer style="background: var(--deep); color: var(--on-dark); font-size: 14px;">
+    <div class="wrap" style="padding-top: 40px; padding-bottom: 40px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px 40px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <span style="color: #fff; font-weight: 600;">Dra. {site.fullName} · {site.role} · {site.crm}</span>
+        <span>Conteúdo informativo. Não substitui consulta médica. Em emergências, ligue 192.</span>
+      </div>
+      <nav aria-label="Rodapé" style="display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center;">
+        <a href={url('/privacidade/')} style="color: #fff;">Política de Privacidade</a>
+        <span>© {new Date().getFullYear()} {site.name}</span>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    // Revela seções ao rolar (uma vez só).
+    const els = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+        }
+      }, { threshold: 0.15 });
+      els.forEach((el) => io.observe(el));
+    } else {
+      els.forEach((el) => el.classList.add('is-in'));
+    }
+
+    // Formulário da newsletter.
+    document.querySelectorAll<HTMLFormElement>('form[data-newsletter]').forEach((form) => {
+      form.addEventListener('submit', (ev) => {
+        const status = form.querySelector('[data-status]');
+        if (!form.getAttribute('action')) {
+          ev.preventDefault();
+          if (status) status.textContent = 'As inscrições abrem em breve. Obrigada pelo interesse!';
+          return;
+        }
+        const email = form.querySelector<HTMLInputElement>('input[type=email]');
+        if (email && !email.checkValidity()) {
+          ev.preventDefault();
+          if (status) status.textContent = 'Esse e-mail parece incompleto. Confere pra mim?';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

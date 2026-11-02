@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import Newsletter from '../../components/Newsletter.astro';
+import { topics } from '../../lib/site';
+
+const published = (await getCollection('artigos'))
+  .filter((a) => !a.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+<Base title="Artigos" description="Todos os artigos da Dra. Mariana Rossi: sintomas, exames, medicamentos, prevenção e quando procurar atendimento.">
+  <section class="wrap" style="padding-top: 64px; padding-bottom: 96px; display: flex; flex-direction: column; gap: 32px;">
+    <div style="display: flex; flex-direction: column; gap: 12px; max-width: 760px;">
+      <p class="eyebrow">Artigos</p>
+      <h1 style="font-size: clamp(2.3rem, 4vw, 3.4rem); line-height: 1.08;">Explicações para ler com calma.</h1>
+      <p class="lead">Escolha um tema ou veja tudo. Cada texto termina com os sinais que pedem atendimento.</p>
+    </div>
+    <div class="chips" role="group" aria-label="Filtrar por tema">
+      <button type="button" class="chip" data-filter="Todos" aria-pressed="true">Todos</button>
+      {topics.map((t) => <button type="button" class="chip" data-filter={t} aria-pressed="false">{t}</button>)}
+    </div>
+    <div class="grid-cards" data-list>
+      {published.map((a) => <ArticleCard entry={a} />)}
+    </div>
+    <p data-empty hidden class="lead">Ainda não há artigos neste tema. Em breve!</p>
+  </section>
+  <Newsletter />
+</Base>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  const cards = document.querySelectorAll<HTMLElement>('[data-list] [data-topic]');
+  const empty = document.querySelector<HTMLElement>('[data-empty]');
+  function apply(topic: string) {
+    let shown = 0;
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === topic)));
+    cards.forEach((c) => {
+      const on = topic === 'Todos' || c.dataset.topic === topic;
+      c.hidden = !on;
+      if (on) shown++;
+    });
+    if (empty) empty.hidden = shown > 0;
+  }
+  buttons.forEach((b) => b.addEventListener('click', () => {
+    const t = b.dataset.filter ?? 'Todos';
+    apply(t);
+    const u = new URL(location.href);
+    if (t === 'Todos') u.searchParams.delete('tema'); else u.searchParams.set('tema', t);
+    history.replaceState(null, '', u);
+  }));
+  const initial = new URLSearchParams(location.search).get('tema');
+  if (initial) apply(initial);
+</script>

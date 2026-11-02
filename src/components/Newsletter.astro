@@ -1,0 +1,34 @@
+---
+import { site, url } from '../lib/site';
+interface Props { title?: string; text?: string; id?: string }
+const {
+  title = 'Receba cada artigo novo no seu e-mail.',
+  text = 'Uma explicação por vez, sem alarmismo. Você lê quando puder.',
+  id = 'receber',
+} = Astro.props;
+---
+<section id={id} aria-labelledby={`${id}-t`} style="background: var(--ink); color: #fff;">
+  <div class="wrap reveal" style="padding-top: 96px; padding-bottom: 96px; display: flex; flex-wrap: wrap; gap: 48px; align-items: center;">
+    <div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 16px;">
+      <h2 id={`${id}-t`} style="font-size: clamp(2.1rem, 3.4vw, 3.2rem); line-height: 1.08;">{title}</h2>
+      <p style="color: var(--on-dark); font-size: 18px;">{text}</p>
+    </div>
+    <form class="form" data-newsletter action={site.newsletterAction || undefined} method="post" style="flex: 1 1 420px; min-width: 0;">
+      <div class="form-row">
+        <label class="field">Seu nome
+          <input type="text" name="nome" autocomplete="given-name" placeholder="Como posso te chamar?" />
+        </label>
+        <label class="field" style="flex-grow: 1.4;">Seu e-mail
+          <input type="email" name="email" autocomplete="email" placeholder="voce@email.com" required />
+        </label>
+      </div>
+      <label class="field">
+        <span>Quer sugerir um tema? <span style="font-weight: 400; color: var(--on-dark);">(opcional)</span></span>
+        <input type="text" name="tema" placeholder="Ex.: quando tomar vacina da gripe" />
+      </label>
+      <button type="submit" class="btn btn-light" style="align-self: flex-start;">Quero receber os artigos</button>
+      <p class="form-status" data-status role="status" aria-live="polite"></p>
+      <p class="form-note">Um e-mail por artigo novo. Sem spam, e você cancela com um clique. Seus dados seguem a <a href={url('/privacidade/')}>Política de Privacidade</a>.</p>
+    </form>
+  </div>
+</section>

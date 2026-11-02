@@ -1,0 +1,27 @@
+---
+import { url, readingMinutes } from '../lib/site';
+
+interface Props {
+  entry: any;
+  feature?: boolean;
+}
+const { entry, feature = false } = Astro.props;
+const href = url(`/artigos/${entry.id}/`);
+const minutes = readingMinutes(entry.body ?? '');
+---
+{feature ? (
+  <a class="card card-feature" href={href} data-topic={entry.data.topic}>
+    <span class="chip-dark">{entry.data.topic}</span>
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <h3 class="card-title">{entry.data.title}</h3>
+      <p style="font-size: 18px; max-width: 560px;">{entry.data.description}</p>
+      <span class="card-meta">{minutes} min de leitura · Ler artigo <span class="arrow">→</span></span>
+    </div>
+  </a>
+) : (
+  <a class="card" href={href} data-topic={entry.data.topic}>
+    <span class="card-topic">{entry.data.topic}</span>
+    <h3 class="card-title">{entry.data.title}</h3>
+    <span class="card-meta">{minutes} min de leitura <span class="arrow">→</span></span>
+  </a>
+)}
