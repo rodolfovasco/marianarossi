@@ -34,7 +34,7 @@ const jsonLd = {
   datePublished: d.date.toISOString(),
   dateModified: (d.updated ?? d.date).toISOString(),
   inLanguage: 'pt-BR',
-  author: { '@type': 'Physician', name: `Dra. ${site.fullName}`, identifier: site.crm },
+  author: { '@type': 'Physician', name: `Dra. ${site.fullName}`, identifier: [site.crm, site.rqe], medicalSpecialty: 'Pediatric' },
   reviewedBy: { '@type': 'Physician', name: `Dra. ${site.fullName}` },
 };
 ---
@@ -47,7 +47,7 @@ const jsonLd = {
       <h1 class="a-title">{d.title}</h1>
       <p class="a-lead">{d.description}</p>
       <div class="a-meta">
-        <span style="font-weight: 800; color: var(--ink);">Por Dra. Mariana Rossi · {site.role} · {site.crm}</span>
+        <span style="font-weight: 800; color: var(--ink);">Por Dra. Mariana Rossi · {site.role} · {site.crm} · {site.rqe}</span>
         <span>{minutes} min de leitura</span>
         <span>{d.updated ? `Atualizado em ${formatDate(d.updated)}` : `Publicado em ${formatDate(d.date)}`}</span>
       </div>
@@ -96,7 +96,7 @@ const jsonLd = {
     <div class="a-author">
       <Image src={avatar} alt="" width={152} height={152} class="a-avatar" />
       <div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 4px;">
-        <span style="font-weight: 800;">Dra. {site.fullName} · {site.role} · {site.crm}</span>
+        <span style="font-weight: 800;">Dra. {site.fullName} · {site.role} · {site.crm} · {site.rqe}</span>
         <span style="font-size: 16px; color: var(--muted); line-height: 1.5;">A Tia Mari: pediatra com Título de Especialista pela SBP, atua em pronto atendimento em Ribeirão Preto e escreve para explicar com calma o que ouve todos os dias.</span>
       </div>
     </div>

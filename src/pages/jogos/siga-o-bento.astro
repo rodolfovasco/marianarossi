@@ -1,0 +1,115 @@
+---
+import GameShell from '../../components/GameShell.astro';
+import Sticker from '../../components/Sticker.astro';
+const pads = [
+  { k: 'heart', name: 'coração', c: '#FF8FAB', d: '#D63A63' },
+  { k: 'star', name: 'estrela', c: '#FFD76A', d: '#E0A12A' },
+  { k: 'drop', name: 'gotinha', c: '#8FD3FF', d: '#1478BC' },
+  { k: 'bandaid', name: 'curativo', c: '#B9A6F5', d: '#5B3FC0' },
+] as const;
+---
+<GameShell title="Siga o Bento" color="t-uva" intro="O Bento acende as figurinhas numa sequência. Preste atenção e repita na mesma ordem. A cada rodada, uma a mais!" description="Jogo de memória de sequência com o Bento, com cores, figurinhas e sons.">
+  <div class="score" aria-live="polite">
+    <span class="pill">Nível: <b data-level>0</b></span>
+    <span class="pill">Recorde: <b data-best>0</b></span>
+  </div>
+  <p class="status" data-status role="status">Toque em Começar e observe!</p>
+  <div class="pads" data-pads>
+    {pads.map((p, i) => (
+      <button type="button" class="pad" data-i={i} aria-label={p.name} style={`--c: ${p.c}; --d: ${p.d}`} disabled>
+        <Sticker kind={p.k} size={84} />
+      </button>
+    ))}
+  </div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+    <button type="button" class="btn" data-start>Começar</button>
+    <button type="button" class="btn btn-white" data-sound aria-pressed="true">Som ligado</button>
+  </div>
+</GameShell>
+
+<script>
+  const pads = Array.from(document.querySelectorAll<HTMLButtonElement>('.pad'));
+  const status = document.querySelector('[data-status]')!;
+  const levelEl = document.querySelector('[data-level]')!;
+  const bestEl = document.querySelector('[data-best]')!;
+  const startBtn = document.querySelector<HTMLButtonElement>('[data-start]')!;
+  const soundBtn = document.querySelector<HTMLButtonElement>('[data-sound]')!;
+  const notes = [392, 523, 659, 784];
+  let seq: number[] = [], pos = 0, best = 0, sound = true, ctx: AudioContext | null = null;
+  try { best = Number(localStorage.getItem('siga-best') || 0); } catch {}
+  bestEl.textContent = String(best);
+
+  function beep(i: number) {
+    if (!sound) return;
+    try {
+      ctx = ctx || new AudioContext();
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'triangle'; o.frequency.value = notes[i];
+      g.gain.setValueAtTime(0.0001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
+      o.connect(g).connect(ctx.destination); o.start(); o.stop(ctx.currentTime + 0.4);
+    } catch {}
+  }
+  const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  async function light(i: number, ms = 420) { pads[i].classList.add('lit'); beep(i); await wait(ms); pads[i].classList.remove('lit'); }
+
+  async function playSeq() {
+    pads.forEach((p) => (p.disabled = true));
+    status.textContent = 'Observe o Bento...';
+    await wait(600);
+    const speed = Math.max(260, 520 - seq.length * 20);
+    for (const i of seq) { await light(i, speed); await wait(140); }
+    pos = 0;
+    pads.forEach((p) => (p.disabled = false));
+    status.textContent = 'Sua vez! Repita a sequência.';
+  }
+
+  function next() {
+    seq.push(Math.floor(Math.random() * 4));
+    levelEl.textContent = String(seq.length);
+    playSeq();
+  }
+
+  pads.forEach((p, i) => p.addEventListener('click', async () => {
+    light(i, 220);
+    if (i !== seq[pos]) {
+      pads.forEach((x) => (x.disabled = true));
+      const reached = seq.length - 1;
+      if (reached > best) { best = reached; bestEl.textContent = String(best); try { localStorage.setItem('siga-best', String(best)); } catch {} }
+      status.textContent = reached > 0 ? `Ops! Você completou ${reached} ${reached === 1 ? 'nível' : 'níveis'}. Bora de novo?` : 'Ops! Errou a primeira. Tenta de novo?';
+      document.querySelector('.pads')!.classList.add('fail');
+      setTimeout(() => document.querySelector('.pads')!.classList.remove('fail'), 500);
+      startBtn.hidden = false; startBtn.textContent = 'Jogar de novo';
+      return;
+    }
+    pos++;
+    if (pos === seq.length) {
+      pads.forEach((x) => (x.disabled = true));
+      status.textContent = ['Isso aí!', 'Mandou bem!', 'Que memória!', 'Perfeito!'][Math.floor(Math.random() * 4)];
+      await wait(700); next();
+    }
+  }));
+
+  startBtn.addEventListener('click', () => { seq = []; startBtn.hidden = true; next(); });
+  soundBtn.addEventListener('click', () => {
+    sound = !sound; soundBtn.setAttribute('aria-pressed', String(sound));
+    soundBtn.textContent = sound ? 'Som ligado' : 'Som desligado';
+  });
+</script>
+
+<style>
+  .score { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .pill { background: #fff; border: 2px solid var(--line); border-radius: 999px; padding: 6px 16px; font-weight: 800; }
+  .status { font-family: var(--display); font-weight: 600; font-size: 24px; text-align: center; min-height: 1.4em; }
+  .pads { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; width: min(420px, 100%); }
+  .pad { aspect-ratio: 1; border-radius: 30px; border: 4px solid var(--ink); background: var(--c); box-shadow: 0 8px 0 var(--d); display: grid; place-items: center; cursor: pointer; transition: transform .1s, box-shadow .1s, filter .15s; filter: saturate(.75) brightness(.95); }
+  .pad :global(svg) { width: 52%; height: auto; }
+  .pad:disabled { cursor: default; }
+  .pad:not(:disabled):active { transform: translateY(6px); box-shadow: 0 2px 0 var(--d); }
+  .pad.lit { filter: saturate(1.3) brightness(1.15); transform: scale(1.06); box-shadow: 0 8px 0 var(--d), 0 0 0 8px #fff, 0 0 0 12px var(--d); }
+  @media (prefers-reduced-motion: no-preference) {
+    .pads.fail { animation: nope .45s ease-in-out; }
+    @keyframes nope { 0%, 100% { translate: 0; } 25% { translate: -10px; } 75% { translate: 10px; } }
+  }
+</style>

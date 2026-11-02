@@ -6,6 +6,7 @@ export const site = {
   fullName: 'Mariana Rossi Oliveira',
   role: 'Pediatra',
   crm: 'CRM-SP 163730',
+  rqe: 'RQE 118511',
   city: 'Ribeirão Preto',
   region: 'Ribeirão Preto e região',
   description:

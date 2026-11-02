@@ -1,0 +1,84 @@
+---
+import GameShell from '../../components/GameShell.astro';
+import Bento from '../../components/Bento.astro';
+---
+<GameShell title="Esconde-esconde" color="t-sol" intro="O Bento se escondeu atrás de um dos arbustos. Toque para procurar. Onde será que ele está?" description="Esconde-esconde com o Bento: descubra atrás de qual arbusto ele está.">
+  <div class="score" aria-live="polite">
+    <span class="pill">Vezes que achou: <b data-found>0</b></span>
+    <span class="pill">Tentativas: <b data-tries>0</b></span>
+  </div>
+  <p class="status" data-status role="status">Procure o Bento!</p>
+  <div class="garden" data-garden>
+    {Array.from({ length: 6 }, (_, i) => (
+      <button type="button" class="bush" data-i={i} aria-label={`Arbusto ${i + 1}`}>
+        <span class="peek" aria-hidden="true"></span>
+        <svg class="leaf" viewBox="0 0 160 120" aria-hidden="true">
+          <ellipse cx="80" cy="118" rx="70" ry="8" fill="rgba(59,47,69,.15)" />
+          <circle cx="44" cy="74" r="38" fill="#2EC4B6" stroke="#3B2F45" stroke-width="4" />
+          <circle cx="116" cy="74" r="38" fill="#2EC4B6" stroke="#3B2F45" stroke-width="4" />
+          <circle cx="80" cy="52" r="44" fill="#34D1C2" stroke="#3B2F45" stroke-width="4" />
+          <rect x="18" y="80" width="124" height="34" rx="17" fill="#2EC4B6" />
+          <path d="M14 112 H146" stroke="#3B2F45" stroke-width="4" stroke-linecap="round" />
+          <circle cx="60" cy="44" r="6" fill="#FF8FAB" /><circle cx="104" cy="66" r="6" fill="#FFC845" /><circle cx="40" cy="80" r="5" fill="#fff" />
+        </svg>
+      </button>
+    ))}
+  </div>
+  <button type="button" class="btn" data-again>Esconder de novo</button>
+  <template data-bento><Bento size={110} /></template>
+</GameShell>
+
+<script>
+  const bushes = Array.from(document.querySelectorAll<HTMLButtonElement>('.bush'));
+  const status = document.querySelector('[data-status]')!;
+  const foundEl = document.querySelector('[data-found]')!;
+  const triesEl = document.querySelector('[data-tries]')!;
+  const tpl = document.querySelector<HTMLTemplateElement>('template[data-bento]')!;
+  let hidden = 0, found = 0, tries = 0, done = false;
+  const misses = ['Aqui não! Tenta outro.', 'Só tem folhinha aqui...', 'Hmm, ele não está aqui.', 'Quase! Procura mais.'];
+
+  function hide() {
+    hidden = Math.floor(Math.random() * bushes.length); tries = 0; done = false;
+    triesEl.textContent = '0';
+    status.textContent = 'Procure o Bento!';
+    bushes.forEach((b) => { b.classList.remove('miss', 'hit'); b.querySelector('.peek')!.innerHTML = ''; b.disabled = false; });
+  }
+
+  bushes.forEach((b, i) => b.addEventListener('click', () => {
+    if (done || b.classList.contains('miss')) return;
+    tries++; triesEl.textContent = String(tries);
+    if (i === hidden) {
+      done = true; found++; foundEl.textContent = String(found);
+      b.querySelector('.peek')!.appendChild(tpl.content.cloneNode(true));
+      b.classList.add('hit');
+      status.textContent = tries === 1 ? 'Achou de primeira! Que olho bom!' : `Achou! Em ${tries} tentativas.`;
+    } else {
+      b.classList.add('miss');
+      status.textContent = misses[Math.floor(Math.random() * misses.length)];
+    }
+  }));
+
+  document.querySelector('[data-again]')!.addEventListener('click', hide);
+  hide();
+</script>
+
+<style>
+  .score { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .pill { background: #fff; border: 2px solid var(--line); border-radius: 999px; padding: 6px 16px; font-weight: 800; }
+  .status { font-family: var(--display); font-weight: 600; font-size: 24px; text-align: center; min-height: 1.4em; }
+  .garden { width: min(640px, 100%); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 14px; padding: 28px 18px 18px; background: linear-gradient(180deg, #DDF1FF 0 55%, #BDEBB5 55% 100%); border: 3px solid var(--ink); border-radius: 30px; box-shadow: 0 6px 0 var(--ink); }
+  .bush { position: relative; background: none; border: 0; padding: 0; cursor: pointer; aspect-ratio: 4 / 3.4; display: flex; align-items: flex-end; justify-content: center; }
+  .leaf { position: relative; z-index: 2; width: 100%; height: auto; transition: transform .25s var(--spring); transform-origin: 50% 100%; }
+  .bush:hover .leaf { transform: scale(1.04); }
+  .peek { position: absolute; z-index: 1; left: 50%; bottom: 30%; transform: translateX(-50%); width: 80%; display: flex; justify-content: center; }
+  .peek :global(svg) { width: 100%; height: auto; }
+  .bush.miss .leaf { opacity: .55; filter: grayscale(.4); }
+  .bush.hit .peek { z-index: 3; }
+  @media (prefers-reduced-motion: no-preference) {
+    .bush.miss .leaf { animation: shake .45s ease-in-out; }
+    .bush.hit .peek { animation: peekup .6s var(--spring) both; }
+    .bush.hit .leaf { animation: shake .4s ease-in-out; }
+    @keyframes shake { 0%, 100% { rotate: 0deg; } 25% { rotate: -6deg; } 75% { rotate: 6deg; } }
+    @keyframes peekup { from { transform: translate(-50%, 50%) scale(.6); opacity: 0; } to { transform: translate(-50%, 0) scale(1); opacity: 1; } }
+  }
+</style>
