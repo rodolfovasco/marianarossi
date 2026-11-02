@@ -95,6 +95,8 @@ Depois de registrar `marianarossi.com.br`:
 
 ```yaml
       - uses: withastro/action@v4
+        with:
+          node-version: 24
         env:
           SITE_URL: https://www.marianarossi.com.br
           BASE_PATH: /
