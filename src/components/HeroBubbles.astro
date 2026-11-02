@@ -1,0 +1,157 @@
+---
+// Bolhas de sabão no fundo do hero: sobem devagar, fogem do ponteiro e estouram no clique.
+---
+<canvas class="hero-bubbles" data-bubbles aria-hidden="true"></canvas>
+
+<script>
+  const cv = document.querySelector<HTMLCanvasElement>('[data-bubbles]');
+  const hero = cv?.closest<HTMLElement>('.hero');
+  if (cv && hero) {
+    const ctx = cv.getContext('2d')!;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const tints = ['255,143,171', '79,182,240', '255,200,69', '159,134,240', '46,196,182'];
+    type B = { x: number; y: number; r: number; vx: number; vy: number; rise: number; ph: number; tint: string; born: number };
+    type Pop = { x: number; y: number; r: number; t0: number; tint: string };
+    let W = 0, H = 0, bubbles: B[] = [], pops: Pop[] = [], raf = 0, visible = true, last = 0;
+    const ptr = { x: -999, y: -999, px: -999, py: -999, vx: 0, vy: 0, on: false };
+
+    const rand = (a: number, b: number) => a + Math.random() * (b - a);
+    function make(fromBottom: boolean): B {
+      const r = W < 760 ? rand(16, 36) : rand(20, 52);
+      return { x: rand(r, W - r), y: fromBottom ? H + r + rand(0, 80) : rand(r, H - r), r, vx: 0, vy: 0, rise: rand(14, 30), ph: rand(0, Math.PI * 2), tint: tints[Math.floor(Math.random() * tints.length)], born: performance.now() };
+    }
+
+    function build() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = hero!.clientWidth; H = hero!.clientHeight;
+      cv!.width = Math.round(W * dpr); cv!.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const n = W < 760 ? 9 : 16;
+      bubbles = Array.from({ length: n }, () => make(false));
+    }
+
+    function drawBubble(b: B, t: number) {
+      const { x, y, r } = b;
+      // corpo translúcido com reflexo colorido (iridescência)
+      const g = ctx.createRadialGradient(x - r * 0.3, y - r * 0.35, r * 0.1, x, y, r);
+      g.addColorStop(0, 'rgba(255,255,255,0.05)');
+      g.addColorStop(0.75, `rgba(${b.tint},0.10)`);
+      g.addColorStop(1, `rgba(${b.tint},0.38)`);
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+      // borda arco-íris girando devagar
+      const a = t * 0.0006 + b.ph;
+      const lg = ctx.createLinearGradient(x + Math.cos(a) * r, y + Math.sin(a) * r, x - Math.cos(a) * r, y - Math.sin(a) * r);
+      lg.addColorStop(0, 'rgba(255,143,171,0.75)');
+      lg.addColorStop(0.35, 'rgba(255,200,69,0.6)');
+      lg.addColorStop(0.65, 'rgba(46,196,182,0.6)');
+      lg.addColorStop(1, 'rgba(124,92,224,0.7)');
+      ctx.strokeStyle = lg; ctx.lineWidth = Math.max(1.5, r * 0.06);
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke();
+      // brilhos
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.beginPath(); ctx.ellipse(x - r * 0.4, y - r * 0.42, r * 0.2, r * 0.11, -0.7, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.beginPath(); ctx.arc(x + r * 0.42, y + r * 0.38, r * 0.06, 0, Math.PI * 2); ctx.fill();
+    }
+
+    function drawPop(p: Pop, now: number) {
+      const k = (now - p.t0) / 420; // 0 → 1
+      if (k >= 1) return false;
+      const e = 1 - Math.pow(1 - k, 3);
+      ctx.globalAlpha = 1 - k;
+      ctx.strokeStyle = `rgba(${p.tint},0.9)`; ctx.lineWidth = 3 * (1 - k) + 0.5;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r * (1 + e * 0.5), 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = `rgb(${p.tint})`;
+      for (let i = 0; i < 9; i++) {
+        const ang = (i / 9) * Math.PI * 2 + p.r;
+        const d = p.r * (0.9 + e * 1.1);
+        ctx.beginPath(); ctx.arc(p.x + Math.cos(ang) * d, p.y + Math.sin(ang) * d + e * e * 14, 3.2 * (1 - k) + 1, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.fillStyle = '#3B2F45';
+      ctx.font = `700 ${Math.round(16 + p.r * 0.25)}px Fredoka, Nunito, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText('pop!', p.x, p.y - p.r * 0.2 - e * 18);
+      ctx.globalAlpha = 1;
+      return true;
+    }
+
+    function frame(t: number) {
+      const dt = Math.min(48, last ? t - last : 16) / 16.67; last = t;
+      ptr.vx *= 0.8; ptr.vy *= 0.8;
+      for (const b of bubbles) {
+        // sobe com leve balanço
+        b.vy += (-b.rise / 60 - b.vy) * 0.02 * dt;
+        b.vx += Math.sin(t * 0.0012 + b.ph) * 0.012 * dt;
+        // o ponteiro empurra: repulsão + "arrasto" na direção do movimento
+        if (ptr.on) {
+          const dx = b.x - ptr.x, dy = b.y - ptr.y, d = Math.hypot(dx, dy) || 0.001, R = b.r + 90;
+          if (d < R) {
+            const f = (1 - d / R) * 1.4 * dt;
+            b.vx += (dx / d) * f + ptr.vx * 0.04 * (1 - d / R);
+            b.vy += (dy / d) * f + ptr.vy * 0.04 * (1 - d / R);
+          }
+        }
+        b.vx *= Math.pow(0.965, dt); b.vy *= Math.pow(0.985, dt);
+        b.x += b.vx * dt; b.y += b.vy * dt;
+        // paredes laterais macias
+        if (b.x < b.r) { b.x = b.r; b.vx = Math.abs(b.vx) * 0.6; }
+        if (b.x > W - b.r) { b.x = W - b.r; b.vx = -Math.abs(b.vx) * 0.6; }
+        if (b.y > H + b.r * 2) b.vy -= 0.2;
+      }
+      // bolhas se afastam umas das outras
+      for (let i = 0; i < bubbles.length; i++) for (let j = i + 1; j < bubbles.length; j++) {
+        const a = bubbles[i], c = bubbles[j], dx = c.x - a.x, dy = c.y - a.y, d = Math.hypot(dx, dy) || 0.001, m = a.r + c.r;
+        if (d < m) { const push = (m - d) * 0.03; a.vx -= dx / d * push; a.vy -= dy / d * push; c.vx += dx / d * push; c.vy += dy / d * push; }
+      }
+      // as que saíram por cima voltam por baixo
+      bubbles = bubbles.map((b) => (b.y < -b.r * 2 ? make(true) : b));
+
+      ctx.clearRect(0, 0, W, H);
+      for (const b of bubbles) drawBubble(b, t);
+      pops = pops.filter((p) => drawPop(p, t));
+      raf = visible ? requestAnimationFrame(frame) : 0;
+    }
+
+    function hit(cx: number, cy: number) {
+      for (let i = bubbles.length - 1; i >= 0; i--) { const b = bubbles[i]; if (Math.hypot(cx - b.x, cy - b.y) <= b.r + 4) return i; }
+      return -1;
+    }
+    const local = (e: PointerEvent) => { const r = hero!.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+
+    build();
+    if (reduce) {
+      ctx.clearRect(0, 0, W, H);
+      bubbles.forEach((b) => drawBubble(b, 0));
+    } else {
+      raf = requestAnimationFrame(frame);
+      hero.addEventListener('pointermove', (e) => {
+        const p = local(e);
+        if (ptr.on) { ptr.vx = p.x - ptr.x; ptr.vy = p.y - ptr.y; }
+        ptr.x = p.x; ptr.y = p.y; ptr.on = true;
+        const overUi = (e.target as HTMLElement).closest('a, button, .photo-wrap');
+        hero.classList.toggle('on-bubble', !overUi && hit(p.x, p.y) >= 0);
+      });
+      hero.addEventListener('pointerleave', () => { ptr.on = false; hero.classList.remove('on-bubble'); });
+      hero.addEventListener('pointerup', (e) => { if (e.pointerType !== 'mouse') ptr.on = false; });
+      hero.addEventListener('pointerdown', (e) => {
+        if ((e.target as HTMLElement).closest('a, button, .photo-wrap')) return;
+        const p = local(e), i = hit(p.x, p.y);
+        if (i < 0) return;
+        const b = bubbles[i];
+        pops.push({ x: b.x, y: b.y, r: b.r, t0: performance.now(), tint: b.tint });
+        bubbles.splice(i, 1);
+        setTimeout(() => bubbles.push(make(true)), rand(900, 2200));
+        hero.classList.remove('on-bubble');
+      });
+      new IntersectionObserver((en) => { visible = en[0].isIntersecting; if (visible && !raf) { last = 0; raf = requestAnimationFrame(frame); } }).observe(hero);
+    }
+    let rt: number | undefined;
+    addEventListener('resize', () => { clearTimeout(rt); rt = window.setTimeout(() => { build(); if (reduce) bubbles.forEach((b) => drawBubble(b, 0)); }, 200); });
+  }
+</script>
+
+<style>
+  .hero-bubbles { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+  :global(.hero.on-bubble) { cursor: pointer; }
+</style>
