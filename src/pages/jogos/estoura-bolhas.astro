@@ -1,0 +1,85 @@
+---
+import GameShell from '../../components/GameShell.astro';
+---
+<GameShell title="Estoura bolhas" color="t-ceu" intro="Toque nas bolhas antes que elas voem embora! Dá para jogar até com os pequenos que ainda não sabem ler." description="Jogo de estourar bolhas com o Bento, simples para crianças pequenas.">
+  <div class="score" aria-live="polite">
+    <span class="pill">Bolhas estouradas: <b data-count>0</b></span>
+  </div>
+  <div class="sky" data-sky aria-label="Área das bolhas">
+    <p class="hint" data-hint>Toque em <b>Começar</b> e estoure as bolhas!</p>
+  </div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+    <button type="button" class="btn" data-start>Começar</button>
+    <button type="button" class="btn btn-white" data-stop hidden>Pausar</button>
+  </div>
+</GameShell>
+
+<script>
+  const sky = document.querySelector<HTMLElement>('[data-sky]')!;
+  const countEl = document.querySelector('[data-count]')!;
+  const hint = document.querySelector<HTMLElement>('[data-hint]')!;
+  const startBtn = document.querySelector<HTMLButtonElement>('[data-start]')!;
+  const stopBtn = document.querySelector<HTMLButtonElement>('[data-stop]')!;
+  const colors = ['#FF8FAB', '#4FB6F0', '#FFC845', '#9F86F0', '#2EC4B6'];
+  const cheers = ['Pop!', 'Boa!', 'Uhul!', 'Isso!', 'Plim!'];
+  let count = 0, timer: number | undefined;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function bubble() {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bubble'; b.setAttribute('aria-label', 'Bolha');
+    const size = 56 + Math.random() * 50;
+    b.style.width = b.style.height = `${size}px`;
+    b.style.left = `${Math.random() * (sky.clientWidth - size)}px`;
+    b.style.setProperty('--c', colors[Math.floor(Math.random() * colors.length)]);
+    b.style.setProperty('--t', `${6 + Math.random() * 4}s`);
+    b.style.setProperty('--sway', `${(Math.random() * 2 - 1) * 40}px`);
+    b.addEventListener('pointerdown', (e) => { e.preventDefault(); pop(b); });
+    b.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') pop(b); });
+    b.addEventListener('animationend', (e) => { if (e.animationName.includes('up')) b.remove(); });
+    if (reduce) {
+      b.style.top = `${Math.random() * (sky.clientHeight - size)}px`;
+      setTimeout(() => b.remove(), 3200);
+    }
+    sky.appendChild(b);
+  }
+
+  function pop(b: HTMLButtonElement) {
+    if (b.classList.contains('popped')) return;
+    const r = b.getBoundingClientRect(), s = sky.getBoundingClientRect();
+    b.classList.add('popped');
+    count++; countEl.textContent = String(count);
+    const word = document.createElement('span');
+    word.className = 'cheer'; word.textContent = cheers[Math.floor(Math.random() * cheers.length)];
+    word.style.left = `${r.left - s.left + r.width / 2}px`; word.style.top = `${r.top - s.top + r.height / 2}px`;
+    sky.appendChild(word);
+    setTimeout(() => { b.remove(); word.remove(); }, 600);
+  }
+
+  startBtn.addEventListener('click', () => {
+    hint.hidden = true; startBtn.hidden = true; stopBtn.hidden = false;
+    bubble();
+    timer = window.setInterval(bubble, 850);
+  });
+  stopBtn.addEventListener('click', () => {
+    window.clearInterval(timer);
+    sky.querySelectorAll('.bubble').forEach((b) => b.remove());
+    startBtn.hidden = false; stopBtn.hidden = true; startBtn.textContent = 'Continuar';
+  });
+</script>
+
+<style>
+  .score { display: flex; justify-content: center; }
+  .pill { background: #fff; border: 2px solid var(--line); border-radius: 999px; padding: 6px 18px; font-weight: 800; font-size: 19px; }
+  .sky { position: relative; width: min(760px, 100%); height: min(62vh, 520px); background: linear-gradient(180deg, #BFE6FF 0%, #EAF7FF 100%); border: 3px solid var(--ink); border-radius: 30px; box-shadow: 0 6px 0 var(--ink); overflow: hidden; touch-action: manipulation; }
+  .hint { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 24px; font-family: var(--display); font-weight: 600; font-size: 24px; }
+  .sky :global(.bubble) { position: absolute; bottom: -120px; border-radius: 50%; border: 3px solid rgba(59,47,69,.35); padding: 0; cursor: pointer;
+    background: radial-gradient(circle at 32% 28%, rgba(255,255,255,.95) 0 12%, transparent 13%), radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--c) 35%, transparent) 0%, var(--c) 100%);
+    animation: up var(--t) linear forwards; }
+  .sky :global(.bubble.popped) { animation: popit .3s ease-out forwards; }
+  .sky :global(.cheer) { position: absolute; transform: translate(-50%, -50%); font-family: var(--display); font-weight: 700; font-size: 26px; color: var(--ink); pointer-events: none; animation: cheer .6s var(--spring) forwards; }
+  @media (prefers-reduced-motion: reduce) { .sky :global(.bubble) { bottom: auto; } }
+  @keyframes up { from { transform: translate(0, 0); } 50% { transform: translate(var(--sway), calc(-1 * (min(62vh, 520px) + 120px) / 2)); } to { transform: translate(0, calc(-1 * (min(62vh, 520px) + 240px))); } }
+  @keyframes popit { to { transform: scale(1.6); opacity: 0; } }
+  @keyframes cheer { from { opacity: 0; transform: translate(-50%, -30%) scale(.6); } 40% { opacity: 1; transform: translate(-50%, -60%) scale(1.1); } to { opacity: 0; transform: translate(-50%, -110%) scale(1); } }
+</style>

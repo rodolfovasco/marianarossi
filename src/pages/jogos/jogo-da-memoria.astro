@@ -1,0 +1,99 @@
+---
+import GameShell from '../../components/GameShell.astro';
+import Sticker from '../../components/Sticker.astro';
+import Bento from '../../components/Bento.astro';
+const icons = ['heart', 'star', 'thermo', 'bandaid', 'drop'] as const;
+---
+<GameShell title="Jogo da memória" color="t-uva" intro="Vire duas cartas por vez e encontre os pares. Será que você consegue achar todos?" description="Jogo da memória com as figurinhas do Bento e da Tia Mari.">
+  <div class="score" aria-live="polite">
+    <span class="pill">Jogadas: <b data-moves>0</b></span>
+    <span class="pill">Pares: <b data-pairs>0</b> de 6</span>
+  </div>
+  <p class="status" data-status role="status">Clique numa carta para começar.</p>
+  <div class="deck" data-deck aria-label="Cartas do jogo da memória"></div>
+  <button type="button" class="btn" data-restart>Embaralhar de novo</button>
+
+  {icons.map((k) => <template data-icon={k}><Sticker kind={k} size={70} /></template>)}
+  <template data-icon="bento"><Bento size={70} wave={false} /></template>
+</GameShell>
+
+<script>
+  const names: Record<string, string> = { heart: 'coração', star: 'estrela', thermo: 'termômetro', bandaid: 'curativo', drop: 'gotinha', bento: 'Bento' };
+  const deck = document.querySelector<HTMLElement>('[data-deck]')!;
+  const status = document.querySelector('[data-status]')!;
+  const movesEl = document.querySelector('[data-moves]')!;
+  const pairsEl = document.querySelector('[data-pairs]')!;
+  let open: HTMLButtonElement[] = [];
+  let moves = 0, pairs = 0, lock = false;
+
+  function shuffle<T>(a: T[]) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+  function start() {
+    deck.innerHTML = ''; open = []; moves = 0; pairs = 0; lock = false;
+    movesEl.textContent = '0'; pairsEl.textContent = '0';
+    status.textContent = 'Clique numa carta para começar.';
+    const keys = shuffle([...Object.keys(names), ...Object.keys(names)]);
+    keys.forEach((k, i) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'mcard'; b.dataset.k = k;
+      b.setAttribute('aria-label', `Carta ${i + 1}, virada para baixo`);
+      b.style.setProperty('--d', `${i * 35}ms`);
+      const inner = document.createElement('span'); inner.className = 'inner';
+      const back = document.createElement('span'); back.className = 'face back';
+      back.innerHTML = '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 50 C 14 39, 11 25, 20 19 C 26 15, 31 18, 32 22 C 33 18, 38 15, 44 19 C 53 25, 50 39, 32 50 Z" fill="#fff"/></svg>';
+      const front = document.createElement('span'); front.className = 'face front';
+      front.appendChild(document.querySelector<HTMLTemplateElement>(`template[data-icon="${k}"]`)!.content.cloneNode(true));
+      inner.append(back, front); b.appendChild(inner);
+      b.addEventListener('click', () => flip(b, i));
+      deck.appendChild(b);
+    });
+  }
+
+  function flip(b: HTMLButtonElement, i: number) {
+    if (lock || b.classList.contains('up') || b.classList.contains('done')) return;
+    b.classList.add('up');
+    b.setAttribute('aria-label', `Carta ${i + 1}, ${names[b.dataset.k!]}`);
+    open.push(b);
+    if (open.length < 2) return;
+    moves++; movesEl.textContent = String(moves);
+    const [a, c] = open;
+    if (a.dataset.k === c.dataset.k) {
+      a.classList.add('done'); c.classList.add('done'); open = [];
+      pairs++; pairsEl.textContent = String(pairs);
+      status.textContent = pairs === 6 ? `Parabéns! Você achou todos os pares em ${moves} jogadas!` : `Achou o par: ${names[a.dataset.k!]}!`;
+    } else {
+      lock = true;
+      status.textContent = 'Quase! Tente lembrar onde elas estão.';
+      setTimeout(() => {
+        [a, c].forEach((x) => { x.classList.remove('up'); x.setAttribute('aria-label', 'Carta virada para baixo'); });
+        open = []; lock = false;
+      }, 900);
+    }
+  }
+
+  document.querySelector('[data-restart]')!.addEventListener('click', start);
+  start();
+</script>
+
+<style>
+  .score { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .pill { background: #fff; border: 2px solid var(--line); border-radius: 999px; padding: 6px 16px; font-weight: 800; }
+  .status { font-family: var(--display); font-weight: 600; font-size: 23px; text-align: center; min-height: 1.4em; }
+  .deck { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; width: min(560px, 100%); }
+  @media (max-width: 420px) { .deck { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .deck :global(.mcard) { aspect-ratio: 3 / 4; background: none; border: 0; padding: 0; cursor: pointer; perspective: 700px; }
+  .deck :global(.inner) { position: relative; display: block; width: 100%; height: 100%; transition: transform .5s var(--spring); transform-style: preserve-3d; }
+  .deck :global(.mcard.up .inner), .deck :global(.mcard.done .inner) { transform: rotateY(180deg); }
+  .deck :global(.face) { position: absolute; inset: 0; border-radius: 18px; border: 3px solid var(--ink); box-shadow: 0 5px 0 var(--ink); display: grid; place-items: center; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  .deck :global(.back) { background: var(--uva); }
+  .deck :global(.back svg) { width: 46%; }
+  .deck :global(.front) { background: #fff; transform: rotateY(180deg); }
+  .deck :global(.front svg) { width: 70%; height: auto; }
+  .deck :global(.mcard.done .front) { background: var(--sol-l); }
+  .deck :global(.mcard:hover:not(.up) .back) { filter: brightness(1.08); }
+  @media (prefers-reduced-motion: no-preference) {
+    .deck :global(.mcard) { animation: spring-in .45s var(--spring) both; animation-delay: var(--d); }
+    .deck :global(.mcard.done .front) { animation: winpop .5s var(--spring); }
+    @keyframes winpop { 50% { transform: rotateY(180deg) scale(1.08); } }
+  }
+</style>

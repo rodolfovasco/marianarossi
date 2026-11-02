@@ -211,6 +211,55 @@ const faq = [
     <a class="btn btn-white pop" href={url('/artigos/')} style="align-self: center;">Ver todas as dicas</a>
   </section>
 
+  <!-- BRINQUE COM O BENTO -->
+  <section id="brincar" class="brincar" aria-labelledby="brincar-t" data-loop>
+    <div class="wrap brincar-inner">
+      <div class="brincar-head pop">
+        <Bento size={130} />
+        <div>
+          <p class="kicker" style="color: var(--ink);">Hora do intervalo</p>
+          <h2 id="brincar-t" class="h2">Brinque com o Bento</h2>
+          <p class="lead" style="color: var(--ink);">Três joguinhos simples para a criança se divertir, de preferência com você do lado.</p>
+        </div>
+      </div>
+      <div class="games">
+        <a class="game t-morango pop" href={url('/jogos/jogo-da-velha/')} style="--delay: 0s">
+          <div class="game-art" aria-hidden="true">
+            <div class="mini-board">
+              {['heart','','star','','heart','','star','','heart'].map((k) => <span>{k && <Sticker kind={k as any} size={30} />}</span>)}
+            </div>
+          </div>
+          <span class="tag">2 jogadores · você e o Bento</span>
+          <h3 class="card-title">Jogo da velha</h3>
+          <p>Coração contra estrela. Faça uma linha de três antes do Bento!</p>
+          <span class="game-cta">Jogar <span class="arrow">→</span></span>
+        </a>
+        <a class="game t-uva pop" href={url('/jogos/jogo-da-memoria/')} style="--delay: .12s">
+          <div class="game-art" aria-hidden="true">
+            <div class="mini-cards">
+              <span class="mc mc1"><Sticker kind="thermo" size={40} /></span>
+              <span class="mc mc2 down"></span>
+              <span class="mc mc3"><Sticker kind="thermo" size={40} /></span>
+            </div>
+          </div>
+          <span class="tag">A partir de 3 anos</span>
+          <h3 class="card-title">Jogo da memória</h3>
+          <p>Vire as cartas e encontre os pares de figurinhas.</p>
+          <span class="game-cta">Jogar <span class="arrow">→</span></span>
+        </a>
+        <a class="game t-ceu pop" href={url('/jogos/estoura-bolhas/')} style="--delay: .24s">
+          <div class="game-art" aria-hidden="true">
+            <span class="bb b1"></span><span class="bb b2"></span><span class="bb b3"></span><span class="bb b4"></span>
+          </div>
+          <span class="tag">Para os pequenos</span>
+          <h3 class="card-title">Estoura bolhas</h3>
+          <p>É só tocar nas bolhas coloridas antes que elas voem embora.</p>
+          <span class="game-cta">Jogar <span class="arrow">→</span></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- SOBRE -->
   <section id="sobre" class="sobre" aria-labelledby="sobre-t">
     <div class="wrap sobre-inner">
@@ -426,4 +475,36 @@ const faq = [
   .faq summary::after { content: '+'; flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--morango-l); color: var(--morango); display: grid; place-items: center; font-size: 26px; line-height: 1; transition: transform .35s var(--spring); }
   .faq details[open] summary::after { transform: rotate(135deg); }
   .faq details p { padding: 0 0 18px; color: var(--muted); font-weight: 600; }
+  /* BRINQUE COM O BENTO */
+  .brincar { background: var(--sol); border-top: 3px solid var(--ink); border-bottom: 3px solid var(--ink); }
+  .brincar-inner { padding-top: 88px; padding-bottom: 96px; display: flex; flex-direction: column; gap: 40px; }
+  .brincar-head { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+  .brincar-head > div { flex: 1 1 380px; display: flex; flex-direction: column; gap: 10px; }
+  .games { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 24px; }
+  .game { background: #fff; color: var(--ink); text-decoration: none; border: 3px solid var(--ink); border-radius: 28px; box-shadow: 0 7px 0 var(--ink); padding: 22px 22px 26px; display: flex; flex-direction: column; gap: 10px; transition: transform .25s var(--spring), box-shadow .2s; }
+  .game:hover { color: var(--ink); transform: translateY(-5px) rotate(-1deg); box-shadow: 0 12px 0 var(--ink); }
+  .game:active { transform: translateY(4px); box-shadow: 0 3px 0 var(--ink); }
+  .game p { color: var(--muted); font-weight: 600; }
+  .game-art { height: 170px; border-radius: 20px; background: var(--l); display: grid; place-items: center; position: relative; overflow: hidden; margin-bottom: 6px; }
+  .game-cta { margin-top: auto; font-family: var(--display); font-weight: 600; font-size: 19px; color: var(--c); display: inline-flex; gap: 6px; }
+  .game:hover .arrow { transform: translateX(6px); }
+  .mini-board { display: grid; grid-template-columns: repeat(3, 40px); gap: 6px; }
+  .mini-board span { width: 40px; height: 40px; background: #fff; border: 2px solid var(--ink); border-radius: 10px; display: grid; place-items: center; }
+  .mini-cards { display: flex; gap: 10px; }
+  .mc { width: 62px; height: 82px; border-radius: 12px; border: 3px solid var(--ink); background: #fff; display: grid; place-items: center; box-shadow: 0 4px 0 var(--ink); }
+  .mc.down { background: var(--uva); }
+  .mc1 { transform: rotate(-8deg); } .mc3 { transform: rotate(8deg); }
+  .bb { position: absolute; border-radius: 50%; border: 3px solid rgba(59,47,69,.35); background: radial-gradient(circle at 32% 28%, rgba(255,255,255,.95) 0 12%, transparent 13%), var(--bc); }
+  .b1 { --bc: #FF8FAB; width: 64px; height: 64px; left: 18%; top: 42%; }
+  .b2 { --bc: #FFC845; width: 44px; height: 44px; left: 52%; top: 18%; }
+  .b3 { --bc: #2EC4B6; width: 54px; height: 54px; left: 66%; top: 54%; }
+  .b4 { --bc: #9F86F0; width: 34px; height: 34px; left: 36%; top: 12%; }
+  @media (prefers-reduced-motion: no-preference) {
+    .mini-board :global(svg) { animation: float 3s ease-in-out infinite; }
+    .game:hover .mc1 { transform: rotate(-14deg) translateY(-6px); transition: transform .3s var(--spring); }
+    .game:hover .mc3 { transform: rotate(14deg) translateY(-6px); transition: transform .3s var(--spring); }
+    .bb { animation: floaty 4s ease-in-out infinite; }
+    .b2 { animation-delay: -1s; animation-duration: 5s; } .b3 { animation-delay: -2s; } .b4 { animation-delay: -3s; animation-duration: 3.5s; }
+    @keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+  }
 </style>

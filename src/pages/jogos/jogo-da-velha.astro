@@ -1,0 +1,105 @@
+---
+import GameShell from '../../components/GameShell.astro';
+import Sticker from '../../components/Sticker.astro';
+---
+<GameShell title="Jogo da velha" color="t-morango" intro="Você joga com o coração. O Bento joga com a estrela. Quem fizer uma linha de três primeiro, ganha!" description="Jogo da velha contra o Bento, o ursinho da Tia Mari.">
+  <div class="score" aria-live="polite">
+    <span class="pill p-you"><Sticker kind="heart" size={26} /> Você: <b data-s="you">0</b></span>
+    <span class="pill p-tie">Empates: <b data-s="tie">0</b></span>
+    <span class="pill p-bento"><Sticker kind="star" size={26} /> Bento: <b data-s="bento">0</b></span>
+  </div>
+  <p class="status" data-status role="status">Sua vez! Escolha um quadradinho.</p>
+  <div class="board" data-board role="group" aria-label="Tabuleiro do jogo da velha">
+    {Array.from({ length: 9 }, (_, i) => <button type="button" class="cell" data-i={i} aria-label={`Casa ${i + 1}, vazia`}></button>)}
+  </div>
+  <button type="button" class="btn" data-restart>Jogar de novo</button>
+
+  <template data-mark="you"><Sticker kind="heart" size={72} /></template>
+  <template data-mark="bento"><Sticker kind="star" size={72} /></template>
+</GameShell>
+
+<script>
+  const cells = Array.from(document.querySelectorAll<HTMLButtonElement>('.cell'));
+  const status = document.querySelector('[data-status]')!;
+  const tplYou = document.querySelector<HTMLTemplateElement>('template[data-mark="you"]')!;
+  const tplBento = document.querySelector<HTMLTemplateElement>('template[data-mark="bento"]')!;
+  const score = { you: 0, tie: 0, bento: 0 };
+  const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  let board: (null | 'you' | 'bento')[] = Array(9).fill(null);
+  let over = false;
+  let busy = false;
+
+  const winner = (b: typeof board) => {
+    for (const l of lines) { const [a, c, d] = l; if (b[a] && b[a] === b[c] && b[a] === b[d]) return { who: b[a], line: l }; }
+    return b.every(Boolean) ? { who: 'tie' as const, line: [] } : null;
+  };
+
+  function place(i: number, who: 'you' | 'bento') {
+    board[i] = who;
+    const cell = cells[i];
+    cell.appendChild((who === 'you' ? tplYou : tplBento).content.cloneNode(true));
+    cell.classList.add('filled');
+    cell.setAttribute('aria-label', `Casa ${i + 1}, ${who === 'you' ? 'coração' : 'estrela'}`);
+  }
+
+  function bentoMove(): number {
+    const empty = board.map((v, i) => (v ? -1 : i)).filter((i) => i >= 0);
+    const tryWin = (who: 'you' | 'bento') => empty.find((i) => { const t = [...board]; t[i] = who; return winner(t)?.who === who; });
+    // O Bento é bonzinho: às vezes se distrai e deixa a criança ganhar.
+    const distracted = Math.random() < 0.3;
+    const win = tryWin('bento'); if (win !== undefined) return win;
+    const block = tryWin('you'); if (block !== undefined && !distracted) return block;
+    if (board[4] === null && !distracted) return 4;
+    return empty[Math.floor(Math.random() * empty.length)];
+  }
+
+  function finish(res: NonNullable<ReturnType<typeof winner>>) {
+    over = true;
+    if (res.who === 'tie') { score.tie++; status.textContent = 'Deu velha! Empatou. Vamos de novo?'; }
+    else {
+      res.line.forEach((i) => cells[i].classList.add('win'));
+      if (res.who === 'you') { score.you++; status.textContent = 'Você ganhou! O Bento pediu revanche.'; }
+      else { score.bento++; status.textContent = 'O Bento ganhou essa! Bora tentar de novo?'; }
+    }
+    (['you', 'tie', 'bento'] as const).forEach((k) => (document.querySelector(`[data-s="${k}"]`)!.textContent = String(score[k])));
+  }
+
+  cells.forEach((cell) => cell.addEventListener('click', () => {
+    const i = Number(cell.dataset.i);
+    if (over || busy || board[i]) return;
+    place(i, 'you');
+    let res = winner(board); if (res) return finish(res);
+    busy = true;
+    status.textContent = 'O Bento está pensando...';
+    setTimeout(() => {
+      place(bentoMove(), 'bento');
+      busy = false;
+      res = winner(board); if (res) return finish(res);
+      status.textContent = 'Sua vez!';
+    }, 650);
+  }));
+
+  document.querySelector('[data-restart]')!.addEventListener('click', () => {
+    board = Array(9).fill(null); over = false; busy = false;
+    cells.forEach((c, i) => { c.innerHTML = ''; c.classList.remove('filled', 'win'); c.setAttribute('aria-label', `Casa ${i + 1}, vazia`); });
+    status.textContent = 'Sua vez! Escolha um quadradinho.';
+  });
+</script>
+
+<style>
+  .score { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 2px solid var(--line); border-radius: 999px; padding: 6px 16px; font-weight: 800; }
+  .status { font-family: var(--display); font-weight: 600; font-size: 24px; text-align: center; min-height: 1.4em; }
+  .board { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; width: min(420px, 100%); }
+  .cell { aspect-ratio: 1; background: #fff; border: 3px solid var(--ink); border-radius: 22px; box-shadow: 0 6px 0 var(--ink); cursor: pointer; display: grid; place-items: center; padding: 0; transition: transform .1s, box-shadow .1s, background .2s; }
+  .cell:hover:not(.filled) { background: var(--sol-l); }
+  .cell:active:not(.filled) { transform: translateY(4px); box-shadow: 0 2px 0 var(--ink); }
+  .cell.filled { cursor: default; }
+  .cell :global(svg) { width: 62%; height: auto; }
+  .cell.win { background: var(--sol); }
+  @media (prefers-reduced-motion: no-preference) {
+    .cell :global(svg) { animation: spring-in .45s var(--spring); }
+    .cell.win { animation: winpop .6s var(--spring) 2; }
+    @keyframes winpop { 50% { transform: scale(1.08) rotate(-3deg); } }
+  }
+</style>
