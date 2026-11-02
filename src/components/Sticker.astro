@@ -1,0 +1,32 @@
+---
+// Figurinhas decorativas (adesivos) em SVG.
+interface Props { kind: 'thermo' | 'bandaid' | 'heart' | 'star' | 'drop'; size?: number; class?: string; style?: string }
+const { kind, size = 56, class: cls = '', style = '' } = Astro.props;
+---
+<svg class={`sticker ${cls}`} style={style} width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
+  {kind === 'thermo' && (
+    <g>
+      <rect x="25" y="6" width="14" height="40" rx="7" fill="#fff" stroke="#3B2F45" stroke-width="3" />
+      <circle cx="32" cy="48" r="10" fill="#D63A63" stroke="#3B2F45" stroke-width="3" />
+      <rect x="29" y="22" width="6" height="22" rx="3" fill="#D63A63" />
+      <path d="M41 16h5M41 24h5M41 32h5" stroke="#3B2F45" stroke-width="3" stroke-linecap="round" />
+    </g>
+  )}
+  {kind === 'bandaid' && (
+    <g transform="rotate(-35 32 32)">
+      <rect x="6" y="22" width="52" height="20" rx="10" fill="#FFD7A3" stroke="#3B2F45" stroke-width="3" />
+      <rect x="24" y="22" width="16" height="20" fill="#FFE7C7" stroke="#3B2F45" stroke-width="3" />
+      <circle cx="29" cy="28" r="1.6" fill="#3B2F45" /><circle cx="35" cy="28" r="1.6" fill="#3B2F45" />
+      <circle cx="29" cy="36" r="1.6" fill="#3B2F45" /><circle cx="35" cy="36" r="1.6" fill="#3B2F45" />
+    </g>
+  )}
+  {kind === 'heart' && (
+    <path d="M32 54 C 10 40, 6 22, 18 15 C 25 11, 31 15, 32 20 C 33 15, 39 11, 46 15 C 58 22, 54 40, 32 54 Z" fill="#D63A63" stroke="#3B2F45" stroke-width="3" stroke-linejoin="round" />
+  )}
+  {kind === 'star' && (
+    <path d="M32 6 L39 23 L57 24 L43 36 L48 54 L32 44 L16 54 L21 36 L7 24 L25 23 Z" fill="#FFC845" stroke="#3B2F45" stroke-width="3" stroke-linejoin="round" />
+  )}
+  {kind === 'drop' && (
+    <path d="M32 6 C 32 6, 50 28, 50 40 A 18 18 0 0 1 14 40 C 14 28, 32 6, 32 6 Z" fill="#4FB6F0" stroke="#3B2F45" stroke-width="3" stroke-linejoin="round" />
+  )}
+</svg>

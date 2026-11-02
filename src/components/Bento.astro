@@ -1,0 +1,69 @@
+---
+// Bento, o ursinho da Tia Mari. Original, desenhado em SVG.
+interface Props { size?: number; wave?: boolean; class?: string; holding?: 'heart' | 'letter' }
+const { size = 200, wave = true, class: cls = '', holding = 'heart' } = Astro.props;
+---
+<svg class={`bento ${wave ? 'bento-wave' : ''} ${cls}`} width={size} height={size * 1.1} viewBox="0 0 200 220" role="img" aria-label="Bento, o ursinho mascote da Tia Mari, acenando">
+  <g class="bento-body">
+    <!-- corpo -->
+    <ellipse cx="100" cy="182" rx="52" ry="40" fill="#D9996A" />
+    <ellipse cx="100" cy="190" rx="32" ry="26" fill="#F6D6BC" />
+    <!-- braço esquerdo -->
+    <ellipse cx="52" cy="180" rx="13" ry="22" fill="#C98A5B" transform="rotate(20 52 180)" />
+    <!-- item -->
+    {holding === 'heart' ? (
+      <path d="M100 205 C 84 193, 82 178, 92 175 C 97 174, 100 178, 100 181 C 100 178, 103 174, 108 175 C 118 178, 116 193, 100 205 Z" fill="#D63A63" />
+    ) : (
+      <g transform="rotate(-6 100 190)">
+        <rect x="74" y="172" width="52" height="36" rx="6" fill="#fff" stroke="#3B2F45" stroke-width="3" />
+        <path d="M76 175 L100 193 L124 175" fill="none" stroke="#3B2F45" stroke-width="3" stroke-linejoin="round" />
+        <circle cx="100" cy="196" r="5" fill="#D63A63" />
+      </g>
+    )}
+    <!-- braço que acena -->
+    <g class="bento-arm">
+      <ellipse cx="156" cy="150" rx="13" ry="24" fill="#C98A5B" transform="rotate(-25 156 150)" />
+      <circle cx="164" cy="130" r="11" fill="#C98A5B" />
+    </g>
+    <!-- orelhas -->
+    <circle cx="52" cy="42" r="24" fill="#C98A5B" />
+    <circle cx="52" cy="42" r="12" fill="#F2C7A5" />
+    <circle cx="148" cy="42" r="24" fill="#C98A5B" />
+    <circle cx="148" cy="42" r="12" fill="#F2C7A5" />
+    <!-- cabeça -->
+    <circle cx="100" cy="88" r="64" fill="#D9996A" />
+    <ellipse cx="100" cy="112" rx="32" ry="24" fill="#F6D6BC" />
+    <!-- bochechas -->
+    <circle cx="64" cy="108" r="10" fill="#FF8FAB" opacity="0.55" />
+    <circle cx="136" cy="108" r="10" fill="#FF8FAB" opacity="0.55" />
+    <!-- curativo -->
+    <g transform="rotate(-28 140 76)">
+      <rect x="124" y="70" width="34" height="13" rx="6.5" fill="#FFD7A3" stroke="#E0A12A" stroke-width="1.5" />
+      <rect x="136" y="70" width="10" height="13" fill="#FFE7C7" />
+      <circle cx="139" cy="74" r="1.2" fill="#E0A12A" /><circle cx="143" cy="79" r="1.2" fill="#E0A12A" />
+    </g>
+    <!-- olhos -->
+    <g class="bento-eyes">
+      <ellipse cx="78" cy="82" rx="7" ry="9" fill="#3B2F45" />
+      <ellipse cx="122" cy="82" rx="7" ry="9" fill="#3B2F45" />
+      <circle cx="80" cy="79" r="2.4" fill="#fff" />
+      <circle cx="124" cy="79" r="2.4" fill="#fff" />
+    </g>
+    <!-- nariz e boca -->
+    <ellipse cx="100" cy="102" rx="10" ry="7" fill="#3B2F45" />
+    <path d="M88 116 Q100 128 112 116" fill="none" stroke="#3B2F45" stroke-width="4" stroke-linecap="round" />
+  </g>
+</svg>
+
+<style>
+  .bento { overflow: visible; }
+  @media (prefers-reduced-motion: no-preference) {
+    .bento-eyes { transform-origin: 100px 82px; animation: blink 4.2s infinite; }
+    .bento-wave .bento-arm { transform-origin: 148px 168px; animation: wave 2.4s var(--spring) 0.8s 2; }
+    .bento:hover .bento-arm { animation: wave 1.2s var(--spring) 1; }
+    .bento-body { transform-origin: 100px 220px; animation: breathe 3.6s ease-in-out infinite; }
+  }
+  @keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+  @keyframes wave { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-22deg); } 40% { transform: rotate(10deg); } 60% { transform: rotate(-18deg); } 80% { transform: rotate(6deg); } }
+  @keyframes breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.015, 0.985); } }
+</style>

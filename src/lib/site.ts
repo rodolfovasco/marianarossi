@@ -2,21 +2,22 @@
 
 export const site = {
   name: 'Dra. Mariana Rossi',
+  nickname: 'Tia Mari',
   fullName: 'Mariana Rossi Oliveira',
-  role: 'Médica',
+  role: 'Pediatra',
   crm: 'CRM-SP 163730',
   city: 'Ribeirão Preto',
   region: 'Ribeirão Preto e região',
   description:
-    'Artigos escritos pela Dra. Mariana Rossi, médica em Ribeirão Preto, para entender sintomas, exames e cuidados com clareza e sem alarmismo.',
+    'Dicas da Tia Mari: a pediatra Dra. Mariana Rossi explica o que observar em casa, o que fazer e quando procurar atendimento, sem susto e com base em evidência.',
 
   // Endereço do formulário da newsletter (Buttondown, Brevo, Mailchimp...).
   // Enquanto estiver vazio, o formulário avisa que as inscrições abrem em breve.
   newsletterAction: '',
 };
 
-// Temas dos artigos. Para criar um tema novo, acrescente aqui
-// e em src/content.config.ts.
+// Temas dos artigos e a cor de cada um. Para criar um tema novo,
+// acrescente aqui e em src/content.config.ts.
 export const topics = [
   'Urgência ou consulta?',
   'Exames e resultados',
@@ -25,23 +26,31 @@ export const topics = [
   'Saúde da família',
 ] as const;
 
+export const topicColor: Record<string, string> = {
+  'Urgência ou consulta?': 't-morango',
+  'Exames e resultados': 't-ceu',
+  'Medicamentos': 't-uva',
+  'Prevenção': 't-menta',
+  'Saúde da família': 't-sol',
+};
+
 // Versões do topo da home para teste A/B.
 // A versão A aparece por padrão; ?v=b ou ?v=c no endereço mostra as outras.
 export const heroVariants = {
   a: {
-    title: 'Medicina explicada com clareza, para você decidir com mais segurança.',
-    sub: 'Sou médica de pronto atendimento em Ribeirão Preto. Aqui transformo as dúvidas que ouço todos os dias em artigos simples e baseados em evidências, para você entender sintomas, exames e cuidados antes de se preocupar.',
-    cta: 'Ler os artigos',
+    title: 'Pediatria sem susto.',
+    sub: 'Oi, eu sou a Tia Mari, pediatra de plantão em Ribeirão Preto. Aqui eu explico o que observar em casa, o que fazer e quando correr pro atendimento, do jeitinho que explico no plantão.',
+    cta: 'Ver as dicas',
   },
   b: {
-    title: 'As explicações do plantão, agora por escrito.',
-    sub: 'Febre, resultados de exames, quando ir ao pronto atendimento: respostas diretas de uma médica que ouve essas perguntas toda semana.',
-    cta: 'Começar pelos artigos',
+    title: 'O que eu explico no plantão, agora pra você ler com calma.',
+    sub: 'Febre, tosse, vômito, manchinhas: respostas diretas de uma pediatra que ouve essas perguntas toda semana.',
+    cta: 'Começar pelas dicas',
   },
   c: {
-    title: 'Entenda o que está acontecendo, sem jargão e sem alarmismo.',
-    sub: 'Artigos escritos por uma médica para você saber o que observar em casa, o que perguntar na consulta e quando procurar atendimento.',
-    cta: 'Ver o que já expliquei',
+    title: 'Febre, tosse, manchinha? Respira: a Tia Mari explica.',
+    sub: 'Dicas escritas por uma pediatra para você saber o que observar, o que perguntar e quando procurar atendimento.',
+    cta: 'Quero as dicas',
   },
 };
 

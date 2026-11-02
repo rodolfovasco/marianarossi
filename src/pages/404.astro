@@ -1,12 +1,14 @@
 ---
 import Base from '../layouts/Base.astro';
+import Bento from '../components/Bento.astro';
 import { url } from '../lib/site';
 ---
 <Base title="Página não encontrada">
-  <section class="wrap" style="padding-top: 96px; padding-bottom: 120px; display: flex; flex-direction: column; gap: 20px; align-items: flex-start;">
-    <p class="eyebrow">Erro 404</p>
-    <h1 style="font-size: clamp(2.2rem, 4vw, 3.4rem); line-height: 1.08;">Essa página não existe (ou mudou de lugar).</h1>
-    <p class="lead">Mas os artigos continuam aqui.</p>
-    <a class="btn btn-primary" href={url('/artigos/')}>Ver os artigos</a>
+  <section class="wrap" style="padding-top: 72px; padding-bottom: 110px; display: flex; flex-direction: column; gap: 20px; align-items: center; text-align: center;">
+    <Bento size={170} />
+    <p class="kicker">Ops! Erro 404</p>
+    <h1 style="font-size: clamp(2.2rem, 4vw, 3.4rem); line-height: 1.05;">O Bento procurou, mas essa página não existe.</h1>
+    <p class="lead">As dicas da Tia Mari continuam todas aqui.</p>
+    <a class="btn" href={url('/artigos/')}>Ver as dicas</a>
   </section>
 </Base>

@@ -1,19 +1,24 @@
 ---
 import { site, url } from '../lib/site';
+import Bento from './Bento.astro';
+import Sticker from './Sticker.astro';
 interface Props { title?: string; text?: string; id?: string }
 const {
-  title = 'Receba cada artigo novo no seu e-mail.',
-  text = 'Uma explicação por vez, sem alarmismo. Você lê quando puder.',
+  title = 'Receba as Dicas da Tia Mari',
+  text = 'Uma dica nova por vez, direto no seu e-mail. Sem alarmismo e sem spam.',
   id = 'receber',
 } = Astro.props;
 ---
-<section id={id} aria-labelledby={`${id}-t`} style="background: var(--ink); color: #fff;">
-  <div class="wrap reveal" style="padding-top: 96px; padding-bottom: 96px; display: flex; flex-wrap: wrap; gap: 48px; align-items: center;">
-    <div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 16px;">
-      <h2 id={`${id}-t`} style="font-size: clamp(2.1rem, 3.4vw, 3.2rem); line-height: 1.08;">{title}</h2>
-      <p style="color: var(--on-dark); font-size: 18px;">{text}</p>
+<section id={id} aria-labelledby={`${id}-t`} class="nl" data-loop>
+  <Sticker kind="star" size={54} class="float nl-s1" style="--rot: -12deg; --dur: 5s" />
+  <Sticker kind="heart" size={46} class="float nl-s2" style="--rot: 10deg; --dur: 6s; --fd: -2s" />
+  <div class="wrap nl-inner">
+    <div class="nl-copy pop">
+      <Bento size={150} holding="letter" class="nl-bento" />
+      <h2 id={`${id}-t`} style="font-size: clamp(2.2rem, 3.8vw, 3.3rem); line-height: 1.05;">{title}</h2>
+      <p style="font-size: 19px; color: #fff; font-weight: 600;">{text}</p>
     </div>
-    <form class="form" data-newsletter action={site.newsletterAction || undefined} method="post" style="flex: 1 1 420px; min-width: 0;">
+    <form class="form nl-form pop" style="--delay: .1s" data-newsletter action={site.newsletterAction || undefined} method="post">
       <div class="form-row">
         <label class="field">Seu nome
           <input type="text" name="nome" autocomplete="given-name" placeholder="Como posso te chamar?" />
@@ -23,12 +28,22 @@ const {
         </label>
       </div>
       <label class="field">
-        <span>Quer sugerir um tema? <span style="font-weight: 400; color: var(--on-dark);">(opcional)</span></span>
-        <input type="text" name="tema" placeholder="Ex.: quando tomar vacina da gripe" />
+        <span>Qual dúvida você quer que eu explique? <span style="font-weight: 600; opacity: .85;">(opcional)</span></span>
+        <input type="text" name="tema" placeholder="Ex.: quando dar o primeiro banho de mar" />
       </label>
-      <button type="submit" class="btn btn-light" style="align-self: flex-start;">Quero receber os artigos</button>
+      <button type="submit" class="btn btn-sun" style="align-self: flex-start;">Quero receber as dicas</button>
       <p class="form-status" data-status role="status" aria-live="polite"></p>
-      <p class="form-note">Um e-mail por artigo novo. Sem spam, e você cancela com um clique. Seus dados seguem a <a href={url('/privacidade/')}>Política de Privacidade</a>.</p>
+      <p style="font-size: 15px; color: #fff;">Você cancela com um clique quando quiser. Seus dados seguem a <a href={url('/privacidade/')} style="color: #fff; font-weight: 800;">Política de Privacidade</a>.</p>
     </form>
   </div>
 </section>
+
+<style>
+  .nl { position: relative; overflow: hidden; background: var(--morango); color: #fff; }
+  .nl-inner { position: relative; padding-top: 88px; padding-bottom: 80px; display: flex; flex-wrap: wrap; gap: 40px 56px; align-items: center; }
+  .nl-copy { flex: 1 1 400px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+  .nl-form { flex: 1 1 420px; min-width: 0; background: rgba(0,0,0,0.12); border-radius: 28px; padding: 28px; }
+  .nl :global(.nl-s1) { position: absolute; top: 34px; right: 7%; }
+  .nl :global(.nl-s2) { position: absolute; bottom: 36px; left: 4%; }
+  @media (max-width: 700px) { .nl :global(.nl-s1), .nl :global(.nl-s2) { display: none; } }
+</style>

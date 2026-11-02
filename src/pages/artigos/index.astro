@@ -3,27 +3,27 @@ import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import Newsletter from '../../components/Newsletter.astro';
-import { topics } from '../../lib/site';
+import { topics, topicColor } from '../../lib/site';
 
 const published = (await getCollection('artigos'))
   .filter((a) => !a.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
-<Base title="Artigos" description="Todos os artigos da Dra. Mariana Rossi: sintomas, exames, medicamentos, prevenção e quando procurar atendimento.">
+<Base title="Todas as dicas" description="Todas as Dicas da Tia Mari, da pediatra Dra. Mariana Rossi: febre, exames, medicamentos, prevenção e quando procurar atendimento.">
   <section class="wrap" style="padding-top: 64px; padding-bottom: 96px; display: flex; flex-direction: column; gap: 32px;">
     <div style="display: flex; flex-direction: column; gap: 12px; max-width: 760px;">
-      <p class="eyebrow">Artigos</p>
-      <h1 style="font-size: clamp(2.3rem, 4vw, 3.4rem); line-height: 1.08;">Explicações para ler com calma.</h1>
-      <p class="lead">Escolha um tema ou veja tudo. Cada texto termina com os sinais que pedem atendimento.</p>
+      <p class="kicker">Dicas da Tia Mari</p>
+      <h1 style="font-size: clamp(2.3rem, 4vw, 3.4rem); line-height: 1.08;">Todas as dicas, pra ler com calma.</h1>
+      <p class="lead">Escolha um tema ou veja tudo. Cada dica termina com os sinais que pedem atendimento.</p>
     </div>
     <div class="chips" role="group" aria-label="Filtrar por tema">
       <button type="button" class="chip" data-filter="Todos" aria-pressed="true">Todos</button>
-      {topics.map((t) => <button type="button" class="chip" data-filter={t} aria-pressed="false">{t}</button>)}
+      {topics.map((t) => <button type="button" class={`chip ${topicColor[t]}`} data-filter={t} aria-pressed="false">{t}</button>)}
     </div>
     <div class="grid-cards" data-list>
       {published.map((a) => <ArticleCard entry={a} />)}
     </div>
-    <p data-empty hidden class="lead">Ainda não há artigos neste tema. Em breve!</p>
+    <p data-empty hidden class="lead">Ainda não tem dica neste tema. Em breve!</p>
   </section>
   <Newsletter />
 </Base>

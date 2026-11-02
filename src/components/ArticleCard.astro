@@ -1,27 +1,15 @@
 ---
-import { url, readingMinutes } from '../lib/site';
+import { url, readingMinutes, topicColor } from '../lib/site';
 
-interface Props {
-  entry: any;
-  feature?: boolean;
-}
-const { entry, feature = false } = Astro.props;
+interface Props { entry: any; feature?: boolean; delay?: number }
+const { entry, feature = false, delay = 0 } = Astro.props;
 const href = url(`/artigos/${entry.id}/`);
 const minutes = readingMinutes(entry.body ?? '');
+const color = topicColor[entry.data.topic] ?? 't-morango';
 ---
-{feature ? (
-  <a class="card card-feature" href={href} data-topic={entry.data.topic}>
-    <span class="chip-dark">{entry.data.topic}</span>
-    <div style="display: flex; flex-direction: column; gap: 14px;">
-      <h3 class="card-title">{entry.data.title}</h3>
-      <p style="font-size: 18px; max-width: 560px;">{entry.data.description}</p>
-      <span class="card-meta">{minutes} min de leitura · Ler artigo <span class="arrow">→</span></span>
-    </div>
-  </a>
-) : (
-  <a class="card" href={href} data-topic={entry.data.topic}>
-    <span class="card-topic">{entry.data.topic}</span>
-    <h3 class="card-title">{entry.data.title}</h3>
-    <span class="card-meta">{minutes} min de leitura <span class="arrow">→</span></span>
-  </a>
-)}
+<a class={`card pop ${color} ${feature ? 'card-feature' : ''}`} href={href} data-topic={entry.data.topic} style={`--delay: ${delay}s`}>
+  <span class="tag">{entry.data.topic}</span>
+  <h3 class="card-title">{entry.data.title}</h3>
+  {feature && <p style="font-size: 19px; color: var(--ink); max-width: 560px;">{entry.data.description}</p>}
+  <span class="card-meta">{minutes} min de leitura · Ler <span class="arrow">→</span></span>
+</a>

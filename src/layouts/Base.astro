@@ -5,13 +5,12 @@ import { site, url } from '../lib/site';
 interface Props {
   title?: string;
   description?: string;
-  ogImage?: string;
   jsonLd?: object;
   type?: 'website' | 'article';
 }
 
 const { title, description = site.description, jsonLd, type = 'website' } = Astro.props;
-const pageTitle = title ? `${title} | ${site.name}` : `${site.name} — Medicina explicada com clareza`;
+const pageTitle = title ? `${title} | Dicas da Tia Mari` : `Dicas da Tia Mari — ${site.name}, ${site.role.toLowerCase()} em ${site.city}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(url('/og-image.jpg'), Astro.site);
 ---
@@ -25,10 +24,10 @@ const ogImage = new URL(url('/og-image.jpg'), Astro.site);
   <link rel="canonical" href={canonical} />
   <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
   <link rel="sitemap" href={url('/sitemap-index.xml')} />
-  <meta name="theme-color" content="#FAF6F5" />
+  <meta name="theme-color" content="#FFFFFF" />
   <meta property="og:type" content={type} />
   <meta property="og:locale" content="pt_BR" />
-  <meta property="og:site_name" content={site.name} />
+  <meta property="og:site_name" content="Dicas da Tia Mari" />
   <meta property="og:title" content={title ?? pageTitle} />
   <meta property="og:description" content={description} />
   <meta property="og:url" content={canonical} />
@@ -43,16 +42,22 @@ const ogImage = new URL(url('/og-image.jpg'), Astro.site);
   <a class="skip" href="#conteudo">Pular para o conteúdo</a>
   <header class="site-header">
     <div class="wrap">
-      <a class="brand" href={url('/')}>
-        <span class="brand-name">Mariana Rossi</span>
-        <span class="brand-sub">{site.role} · {site.crm}</span>
+      <a class="brand" href={url('/')} aria-label="Dicas da Tia Mari, página inicial">
+        <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <rect width="64" height="64" rx="18" fill="#D63A63" />
+          <path d="M32 50 C 14 39, 11 25, 20 19 C 26 15, 31 18, 32 22 C 33 18, 38 15, 44 19 C 53 25, 50 39, 32 50 Z" fill="#fff" />
+          <path d="M22 31h6l3-5 4 10 3-5h4" fill="none" stroke="#D63A63" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span class="brand-text">
+          <span class="brand-name">Tia Mari</span>
+          <span class="brand-sub">Dra. Mariana Rossi · {site.role}</span>
+        </span>
       </a>
       <nav class="nav" aria-label="Principal">
-        <a href={url('/artigos/')}>Artigos</a>
+        <a href={url('/artigos/')}>Dicas</a>
         <a class="nav-hide" href={url('/#sobre')}>Sobre</a>
-        <a class="nav-hide" href={url('/#formacao')}>Formação</a>
         <a class="nav-hide" href={url('/#duvidas')}>Dúvidas</a>
-        <a class="btn btn-primary btn-sm" href={url('/#receber')}>Receber artigos</a>
+        <a class="btn btn-sm" href={url('/#receber')}>Receber dicas</a>
       </nav>
     </div>
   </header>
@@ -61,31 +66,38 @@ const ogImage = new URL(url('/og-image.jpg'), Astro.site);
     <slot />
   </main>
 
-  <footer style="background: var(--deep); color: var(--on-dark); font-size: 14px;">
+  <footer style="background: var(--ink); color: #E9E1EC; font-size: 15px;">
     <div class="wrap" style="padding-top: 40px; padding-bottom: 40px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px 40px;">
       <div style="display: flex; flex-direction: column; gap: 6px;">
-        <span style="color: #fff; font-weight: 600;">Dra. {site.fullName} · {site.role} · {site.crm}</span>
+        <span style="color: #fff; font-weight: 800;">Dra. {site.fullName} · {site.role} · {site.crm}</span>
         <span>Conteúdo informativo. Não substitui consulta médica. Em emergências, ligue 192.</span>
       </div>
       <nav aria-label="Rodapé" style="display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center;">
-        <a href={url('/privacidade/')} style="color: #fff;">Política de Privacidade</a>
-        <span>© {new Date().getFullYear()} {site.name}</span>
+        <a href={url('/privacidade/')} style="color: #fff; font-weight: 700;">Política de Privacidade</a>
+        <span>© {new Date().getFullYear()} Dicas da Tia Mari</span>
       </nav>
     </div>
   </footer>
 
   <script>
-    // Revela seções ao rolar (uma vez só).
-    const els = document.querySelectorAll('.reveal');
+    // Entradas com mola ao rolar (uma vez só).
+    const pops = document.querySelectorAll('.pop');
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
         for (const e of entries) {
           if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
         }
-      }, { threshold: 0.15 });
-      els.forEach((el) => io.observe(el));
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+      pops.forEach((el) => io.observe(el));
+
+      // Pausa loops que estão fora da tela (economiza bateria no celular).
+      const loops = document.querySelectorAll('[data-loop]');
+      const lo = new IntersectionObserver((entries) => {
+        for (const e of entries) e.target.classList.toggle('paused', !e.isIntersecting);
+      });
+      loops.forEach((el) => lo.observe(el));
     } else {
-      els.forEach((el) => el.classList.add('is-in'));
+      pops.forEach((el) => el.classList.add('is-in'));
     }
 
     // Formulário da newsletter.
@@ -94,7 +106,7 @@ const ogImage = new URL(url('/og-image.jpg'), Astro.site);
         const status = form.querySelector('[data-status]');
         if (!form.getAttribute('action')) {
           ev.preventDefault();
-          if (status) status.textContent = 'As inscrições abrem em breve. Obrigada pelo interesse!';
+          if (status) status.textContent = 'As inscrições abrem em breve. Obrigada pelo carinho!';
           return;
         }
         const email = form.querySelector<HTMLInputElement>('input[type=email]');

@@ -4,7 +4,9 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import Newsletter from '../components/Newsletter.astro';
-import { site, topics, heroVariants, url } from '../lib/site';
+import Bento from '../components/Bento.astro';
+import Sticker from '../components/Sticker.astro';
+import { site, topics, topicColor, heroVariants, url } from '../lib/site';
 import foto from '../assets/mariana.jpg';
 
 const all = await getCollection('artigos');
@@ -14,11 +16,14 @@ const [featured, ...rest] = published;
 const side = rest.slice(0, 2);
 const more = rest.slice(2, 5);
 const hero = heroVariants.a;
+const words = hero.title.split(' ');
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Physician',
   name: `Dra. ${site.fullName}`,
+  alternateName: site.nickname,
+  medicalSpecialty: 'Pediatric',
   description: site.description,
   url: new URL(url('/'), Astro.site).toString(),
   image: new URL(url('/og-image.jpg'), Astro.site).toString(),
@@ -27,140 +32,235 @@ const jsonLd = {
   identifier: site.crm,
 };
 
+const badges = ['Pediatra', 'Título de Especialista em Pediatria (SBP)', 'Certificação PALS (AHA)', 'Plantão em pronto atendimento', 'Formada pela Barão de Mauá', site.crm];
+
 const faq = [
-  ['A Dra. Mariana atende em consultório?', 'No momento, minha atuação é em pronto atendimento em Ribeirão Preto. Os artigos são a forma de levar essas explicações a mais gente.'],
-  ['Posso tirar uma dúvida sobre o meu caso por mensagem?', 'Os artigos são informativos e não substituem uma avaliação presencial. Para o seu caso, procure atendimento. Em sinais de alerta, vá a um pronto atendimento ou ligue 192 (SAMU).'],
-  ['De onde vêm as informações dos artigos?', 'De diretrizes de sociedades médicas, órgãos de saúde e estudos revisados. As referências ficam no final de cada texto.'],
-  ['Com que frequência saem artigos novos?', 'A ideia é publicar com regularidade. Quem se inscreve recebe cada artigo novo por e-mail.'],
-  ['Posso sugerir um tema?', 'Pode, sim. Use o campo de sugestão no formulário abaixo: muitas pautas nascem de perguntas de leitores.'],
+  ['A Tia Mari atende em consultório?', 'No momento, minha atuação é em pronto atendimento em Ribeirão Preto. As dicas são o jeito de levar essas explicações a mais famílias.'],
+  ['Posso mandar uma dúvida sobre o meu filho?', 'As dicas são informativas e não substituem a avaliação do pediatra. Para o caso do seu filho, procure atendimento. Em sinais de alerta, vá a um pronto atendimento ou ligue 192 (SAMU).'],
+  ['De onde vêm as informações?', 'De diretrizes da Sociedade Brasileira de Pediatria, de órgãos de saúde e de estudos revisados. As referências ficam no final de cada dica.'],
+  ['Com que frequência saem dicas novas?', 'A ideia é publicar com regularidade. Quem se inscreve recebe cada dica nova por e-mail.'],
+  ['Posso sugerir um tema?', 'Pode e deve! Use o campo de sugestão no formulário: muitas dicas nascem de perguntas de mães e pais.'],
 ];
 ---
 <Base jsonLd={jsonLd}>
   <!-- HERO -->
-  <section id="topo" class="wrap hero">
-    <div class="hero-text hero-in">
-      <p class="eyebrow">Dra. Mariana Rossi · Médica em Ribeirão Preto</p>
-      <h1 class="hero-title" data-hero="title">{hero.title}</h1>
-      <p class="hero-sub" data-hero="sub">{hero.sub}</p>
-      <div style="display: flex; flex-wrap: wrap; gap: 12px; padding-top: 4px;">
-        <a class="btn btn-primary" href={url('/artigos/')} data-hero="cta" data-event="cta_hero_click">{hero.cta}</a>
-        <a class="btn btn-ghost" href="#sobre">Conhecer a Dra. Mariana</a>
+  <section class="hero" data-loop>
+    <div class="wrap hero-inner">
+      <div class="hero-text">
+        <p class="kicker hero-k"><Sticker kind="heart" size={26} /> Dicas da Tia Mari</p>
+        <h1 class="hero-title" data-hero="title">
+          {words.map((w, i) => <><span class="w" style={`--i: ${i}`}>{w}</span>{' '}</>)}
+        </h1>
+        <p class="hero-sub" data-hero="sub">{hero.sub}</p>
+        <div class="hero-ctas">
+          <a class="btn" href={url('/artigos/')} data-hero="cta">{hero.cta}</a>
+          <a class="btn btn-white" href="#sobre">Conhecer a Tia Mari</a>
+        </div>
+        <p class="hero-badge"><span class="dot"></span>{site.role} · {site.crm} · {site.city}</p>
       </div>
-      <ul class="proof">
-        <li><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>{site.crm}</li>
-        <li><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/></svg>Formada pela Barão de Mauá</li>
-        <li><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>Rotina de pronto atendimento</li>
-      </ul>
-    </div>
-    <div class="hero-media">
-      <Image src={foto} alt="Dra. Mariana Rossi sorrindo enquanto escreve no notebook, em um escritório claro com plantas" widths={[420, 640, 940]} sizes="(max-width: 900px) 92vw, 470px" loading="eager" fetchpriority="high" class="hero-img" />
-      {featured && (
-        <a class="hero-card" href={url(`/artigos/${featured.id}/`)}>
-          <span class="eyebrow" style="font-size: 12px;">Artigo mais recente</span>
-          <span class="card-title" style="font-size: 18px;">{featured.data.title}</span>
-          <span class="card-meta">Ler agora <span class="arrow">→</span></span>
-        </a>
-      )}
-    </div>
-  </section>
 
-  <!-- COMO EU ESCREVO -->
-  <section aria-labelledby="metodo-t" style="background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);">
-    <div class="wrap reveal" style="padding-top: 88px; padding-bottom: 88px; display: flex; flex-direction: column; gap: 48px;">
-      <div style="display: flex; flex-wrap: wrap; gap: 24px 64px; align-items: end; justify-content: space-between;">
-        <h2 id="metodo-t" class="h2" style="flex: 1 1 420px;">Informação médica que você consegue usar.</h2>
-        <p class="lead" style="flex: 1 1 380px;">No plantão, a pergunta que mais escuto não é “o que eu tenho?”, e sim “isso é grave?”. Cada texto aqui foi escrito para responder essa pergunta com calma e precisão.</p>
-      </div>
-      <div class="grid-cards">
-        {[
-          ['01', 'Baseado em evidências', 'Cada artigo parte de diretrizes e estudos atuais, com as referências listadas no final do texto.'],
-          ['02', 'Na linguagem do consultório', 'Explico como explicaria pessoalmente: termos técnicos traduzidos e exemplos do dia a dia.'],
-          ['03', 'Com sinais de alerta claros', 'Informação não substitui consulta. Todo texto termina dizendo quando é hora de procurar atendimento.'],
-        ].map(([n, t, d]) => (
-          <div style="background: var(--bg); border-radius: var(--radius); padding: 32px; display: flex; flex-direction: column; gap: 12px;">
-            <span style="font-family: var(--display); font-size: 15px; font-weight: 600; color: var(--accent);">{n}</span>
-            <h3 style="font-size: 23px; line-height: 1.2;">{t}</h3>
-            <p style="color: var(--muted);">{d}</p>
-          </div>
-        ))}
+      <div class="hero-art">
+        <div class="blob-bg"></div>
+        <div class="photo-wrap">
+          <Image src={foto} alt="Dra. Mariana Rossi, a Tia Mari, sorrindo enquanto escreve no notebook" widths={[400, 575]} sizes="(max-width: 900px) 80vw, 440px" loading="eager" fetchpriority="high" class="photo" />
+        </div>
+        <Sticker kind="thermo" size={74} class="st st1" style="--rot: 14deg" />
+        <Sticker kind="bandaid" size={70} class="st st2" style="--rot: -8deg" />
+        <Sticker kind="star" size={58} class="st st3" style="--rot: 12deg" />
+        <Sticker kind="drop" size={50} class="st st4" style="--rot: -10deg" />
+        <div class="bento-spot">
+          <Bento size={150} />
+          <span class="bubble">Oi! Eu sou o Bento.</span>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ARTIGOS -->
-  <section id="artigos" aria-labelledby="artigos-t" class="wrap reveal" style="padding-top: 96px; padding-bottom: 96px; display: flex; flex-direction: column; gap: 40px;">
-    <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: end; justify-content: space-between;">
-      <div style="display: flex; flex-direction: column; gap: 10px;">
-        <p class="eyebrow">Artigos</p>
-        <h2 id="artigos-t" class="h2">O que eu explico toda semana, por escrito.</h2>
-      </div>
-      <a href={url('/artigos/')} style="font-weight: 600; text-decoration: none; padding: 10px 0;">Ver todos os artigos →</a>
+  <!-- LETREIRO DE SELOS -->
+  <section class="marquee" aria-label="Credenciais" data-loop>
+    <div class="marquee-track">
+      {[0, 1].map((k) => (
+        <ul aria-hidden={k === 1 ? 'true' : undefined}>
+          {badges.map((b) => <li><Sticker kind="star" size={22} />{b}</li>)}
+        </ul>
+      ))}
     </div>
-    <nav class="chips" aria-label="Temas">
-      {topics.map((t) => <a class="chip" href={url(`/artigos/?tema=${encodeURIComponent(t)}`)}>{t}</a>)}
+  </section>
+
+  <!-- SEMÁFORO -->
+  <section class="wrap sem" aria-labelledby="sem-t">
+    <div class="sec-head pop">
+      <p class="kicker">Semáforo da preocupação</p>
+      <h2 id="sem-t" class="h2">Nem todo susto é urgência. Mas alguns são.</h2>
+      <p class="lead">Um guia rápido pra você respirar e decidir o próximo passo.</p>
+    </div>
+    <div class="sem-grid">
+      <article class="sem-card sem-g pop" style="--delay: 0s">
+        <span class="sem-light" aria-hidden="true"></span>
+        <h3>Observe em casa</h3>
+        <ul>
+          <li>Febre com a criança brincando e bebendo líquidos entre os picos</li>
+          <li>Nariz escorrendo, sem cansaço para respirar</li>
+          <li>Tombo leve, com choro que passa logo</li>
+        </ul>
+      </article>
+      <article class="sem-card sem-y pop" style="--delay: .15s">
+        <span class="sem-light" aria-hidden="true"></span>
+        <h3>Converse com o pediatra</h3>
+        <ul>
+          <li>Tosse que não melhora depois de uma semana</li>
+          <li>Dor de ouvido ou manchinhas na pele sem febre</li>
+          <li>Criança comendo bem menos por vários dias</li>
+        </ul>
+      </article>
+      <article class="sem-card sem-r pop" style="--delay: .3s">
+        <span class="sem-light" aria-hidden="true"></span>
+        <h3>Procure atendimento já</h3>
+        <ul>
+          <li>Dificuldade ou cansaço para respirar</li>
+          <li>Bebê com menos de 3 meses com febre</li>
+          <li>Criança muito sonolenta ou difícil de acordar</li>
+          <li>Manchas roxas que não somem ao apertar</li>
+        </ul>
+      </article>
+    </div>
+    <p class="sem-note">Exemplos gerais, que não substituem a avaliação médica. Na dúvida, procure atendimento. Em emergência, ligue 192.</p>
+  </section>
+
+  <!-- BLOCOS ALTERNADOS -->
+  <section class="feat t-ceu">
+    <div class="wrap feat-inner">
+      <div class="feat-art pop">
+        <svg viewBox="0 0 320 240" class="ill ill-talk" aria-hidden="true">
+          <g class="b1"><rect x="20" y="30" width="190" height="90" rx="28" fill="#fff" stroke="#3B2F45" stroke-width="4" /><path d="M60 118 L50 148 L88 118 Z" fill="#fff" stroke="#3B2F45" stroke-width="4" stroke-linejoin="round" /><rect x="48" y="62" width="120" height="12" rx="6" fill="#4FB6F0" /><rect x="48" y="84" width="80" height="12" rx="6" fill="#DDF1FF" /></g>
+          <g class="b2"><rect x="120" y="128" width="180" height="80" rx="28" fill="#1478BC" stroke="#3B2F45" stroke-width="4" /><path d="M260 206 L272 232 L236 206 Z" fill="#1478BC" stroke="#3B2F45" stroke-width="4" stroke-linejoin="round" /><circle cx="176" cy="168" r="9" fill="#fff" /><circle cx="210" cy="168" r="9" fill="#fff" /><circle cx="244" cy="168" r="9" fill="#fff" /></g>
+        </svg>
+      </div>
+      <div class="feat-copy pop" style="--delay: .1s">
+        <p class="kicker" style="color: var(--ceu);">Do jeitinho do plantão</p>
+        <h2 class="h2">Explicado como se eu estivesse do seu lado.</h2>
+        <p class="lead">Sem palavra difícil e sem julgamento. Cada dica traduz o termo técnico e usa exemplos de casa, do dia a dia com as crianças.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="feat feat-rev t-uva">
+    <div class="wrap feat-inner">
+      <div class="feat-art pop">
+        <svg viewBox="0 0 320 240" class="ill ill-book" aria-hidden="true">
+          <path d="M40 70 Q100 50 160 76 L160 206 Q100 180 40 200 Z" fill="#fff" stroke="#3B2F45" stroke-width="4" stroke-linejoin="round" />
+          <path d="M280 70 Q220 50 160 76 L160 206 Q220 180 280 200 Z" fill="#EEE8FF" stroke="#3B2F45" stroke-width="4" stroke-linejoin="round" />
+          <path d="M64 100 Q100 92 136 104 M64 124 Q100 116 136 128 M64 148 Q100 140 136 152" stroke="#7C5CE0" stroke-width="6" stroke-linecap="round" fill="none" />
+          <path d="M190 130 l14 14 l28 -30" stroke="#0B8577" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none" class="check" />
+          <path class="spin s1" d="M70 20 L75 32 L88 33 L78 41 L81 54 L70 47 L59 54 L62 41 L52 33 L65 32 Z" fill="#FFC845" stroke="#3B2F45" stroke-width="3" stroke-linejoin="round" />
+          <path class="spin s2" d="M250 14 L254 24 L265 25 L257 32 L259 43 L250 37 L241 43 L243 32 L235 25 L246 24 Z" fill="#FFC845" stroke="#3B2F45" stroke-width="3" stroke-linejoin="round" />
+        </svg>
+      </div>
+      <div class="feat-copy pop" style="--delay: .1s">
+        <p class="kicker" style="color: var(--uva);">Baseado em evidência</p>
+        <h2 class="h2">Carinho no jeito, ciência no conteúdo.</h2>
+        <p class="lead">Cada dica parte das recomendações da Sociedade Brasileira de Pediatria e de estudos atuais, com as referências no final para você conferir.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="feat t-menta">
+    <div class="wrap feat-inner">
+      <div class="feat-art pop">
+        <svg viewBox="0 0 320 240" class="ill ill-thermo" aria-hidden="true">
+          <rect x="138" y="20" width="44" height="150" rx="22" fill="#fff" stroke="#3B2F45" stroke-width="4" />
+          <rect class="merc" x="150" y="60" width="20" height="110" rx="10" fill="#D63A63" />
+          <circle cx="160" cy="186" r="32" fill="#D63A63" stroke="#3B2F45" stroke-width="4" />
+          <path d="M190 52h16M190 80h16M190 108h16M190 136h16" stroke="#3B2F45" stroke-width="4" stroke-linecap="round" />
+          <g class="pulse"><circle cx="72" cy="90" r="34" fill="#DDF7F3" stroke="#0B8577" stroke-width="4" /><path d="M56 90h10l6-12 8 24 6-12h10" stroke="#0B8577" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round" /></g>
+          <g class="pulse p2"><circle cx="250" cy="170" r="28" fill="#FFF4D1" stroke="#E0A12A" stroke-width="4" /><path d="M250 156v16M250 182v1" stroke="#3B2F45" stroke-width="6" stroke-linecap="round" /></g>
+        </svg>
+      </div>
+      <div class="feat-copy pop" style="--delay: .1s">
+        <p class="kicker" style="color: var(--menta);">Sinais de alerta à vista</p>
+        <h2 class="h2">Toda dica termina dizendo quando procurar ajuda.</h2>
+        <p class="lead">Informação boa acalma, mas não substitui consulta. Por isso os sinais que pedem atendimento ficam sempre destacados, sem precisar procurar.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DICAS -->
+  <section id="dicas" class="wrap dicas" aria-labelledby="dicas-t">
+    <div class="sec-head pop" style="text-align: left; align-items: flex-start; margin: 0;">
+      <p class="kicker">Dicas da Tia Mari</p>
+      <h2 id="dicas-t" class="h2">O que eu explico toda semana, agora por escrito.</h2>
+    </div>
+    <nav class="chips pop" aria-label="Temas">
+      {topics.map((t) => <a class={`chip ${topicColor[t]}`} href={url(`/artigos/?tema=${encodeURIComponent(t)}`)}>{t}</a>)}
     </nav>
     {featured && (
-      <div style="display: flex; flex-wrap: wrap; gap: 24px;">
-        <div style="flex: 2 1 520px; min-width: 0; display: flex;"><ArticleCard entry={featured} feature /></div>
-        {side.length > 0 && (
-          <div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 24px;">
-            {side.map((a) => <ArticleCard entry={a} />)}
-          </div>
-        )}
+      <div class="dicas-grid">
+        <div class="dicas-main"><ArticleCard entry={featured} feature /></div>
+        {side.length > 0 && <div class="dicas-side">{side.map((a, i) => <ArticleCard entry={a} delay={0.1 * (i + 1)} />)}</div>}
       </div>
     )}
-    {more.length > 0 && <div class="grid-cards">{more.map((a) => <ArticleCard entry={a} />)}</div>}
+    {more.length > 0 && <div class="grid-cards">{more.map((a, i) => <ArticleCard entry={a} delay={0.08 * i} />)}</div>}
     {upcoming.length > 0 && (
-      <div style="border-top: 1px solid var(--line); padding-top: 28px; display: flex; flex-direction: column; gap: 14px;">
-        <p style="font-weight: 600;">Em breve por aqui</p>
-        <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px;">
-          {upcoming.map((a) => (
-            <li style="background: var(--soft); border-radius: 999px; padding: 8px 16px; font-size: 15px; color: var(--ink-2);">{a.data.title}</li>
-          ))}
+      <div class="soon pop">
+        <p style="font-family: var(--display); font-weight: 600; font-size: 20px;">Em breve por aqui</p>
+        <ul>
+          {upcoming.map((a) => <li class={topicColor[a.data.topic]}>{a.data.title}</li>)}
         </ul>
       </div>
     )}
+    <a class="btn btn-white pop" href={url('/artigos/')} style="align-self: center;">Ver todas as dicas</a>
   </section>
 
   <!-- SOBRE -->
-  <section id="sobre" aria-labelledby="sobre-t" style="background: var(--soft);">
-    <div class="wrap reveal" style="padding-top: 96px; padding-bottom: 96px; display: flex; flex-wrap: wrap; gap: 56px; align-items: flex-start;">
-      <div style="flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 20px;">
-        <p class="eyebrow">Sobre</p>
-        <h2 id="sobre-t" class="h2">Prazer, sou a Mariana.</h2>
-        <blockquote style="margin: 12px 0 0; font-family: var(--display); font-size: 24px; line-height: 1.35; font-weight: 500; color: var(--accent);">“Uma boa explicação muda a forma como a pessoa sai do atendimento. Eu quero que ela chegue a mais gente.”</blockquote>
+  <section id="sobre" class="sobre" aria-labelledby="sobre-t">
+    <div class="wrap sobre-inner">
+      <div class="sobre-photo pop">
+        <Image src={foto} alt="" widths={[360, 520]} sizes="(max-width: 900px) 70vw, 380px" class="sobre-img" />
+        <Sticker kind="heart" size={64} class="float sobre-st" style="--rot: -10deg" />
       </div>
-      <div style="flex: 1.4 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 18px; font-size: 18px; color: var(--ink-2);">
-        <p>Sou {site.fullName}, médica formada em 2013 pelo Centro Universitário Barão de Mauá, em Ribeirão Preto. Hoje atuo em plantões de pronto atendimento na cidade, onde boa parte do trabalho é explicar: o que está acontecendo, o que esperar nos próximos dias e quando voltar.</p>
-        <p>Percebi que essas explicações ajudam muito além da consulta. Por isso criei este espaço: para escrever, com calma e base científica, as respostas que as pessoas mais precisam e nem sempre têm tempo de ouvir no corredor de um plantão.</p>
-        <dl class="facts">
-          <div><dt>Registro</dt><dd>{site.crm}</dd></div>
-          <div><dt>Graduação</dt><dd>Medicina · Barão de Mauá · 2013</dd></div>
-          <div><dt>Atuação</dt><dd>Pronto atendimento · Ribeirão Preto</dd></div>
-        </dl>
+      <div class="sobre-copy pop" style="--delay: .1s">
+        <p class="kicker" style="color: #fff;">Quem é a Tia Mari</p>
+        <h2 id="sobre-t" class="h2">Prazer, sou a Mariana. Mas pode me chamar de Tia Mari.</h2>
+        <p>Sou {site.fullName}, pediatra, formada em 2013 pelo Centro Universitário Barão de Mauá, em Ribeirão Preto, com Título de Especialista em Pediatria pela Sociedade Brasileira de Pediatria.</p>
+        <p>No plantão, boa parte do meu trabalho é explicar para mães e pais o que está acontecendo, o que esperar e quando voltar. Percebi que essas explicações ajudam muito além do atendimento, então resolvi escrevê-las aqui, com calma e carinho.</p>
+        <blockquote>“Pai e mãe informados ficam mais tranquilos, e criança se cuida melhor com família tranquila.”</blockquote>
       </div>
     </div>
   </section>
 
   <!-- FORMAÇÃO -->
-  <section id="formacao" aria-labelledby="formacao-t" class="wrap reveal" style="padding-top: 96px; padding-bottom: 96px; display: flex; flex-wrap: wrap; gap: 56px;">
-    <div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 16px;">
-      <p class="eyebrow">Formação e atualização</p>
-      <h2 id="formacao-t" class="h2">Estudo contínuo, porque a medicina muda.</h2>
-      <p class="lead">Títulos e certificações que sustentam cada explicação.</p>
+  <section id="formacao" class="wrap formacao" aria-labelledby="formacao-t">
+    <div class="sec-head pop">
+      <p class="kicker">Formação</p>
+      <h2 id="formacao-t" class="h2">Preparo de quem cuida de criança todo dia.</h2>
     </div>
-    <ol class="cv">
-      <li><span class="cv-t">Médica pediatra · Título de Especialista em Pediatria</span><span class="cv-d">Sociedade Brasileira de Pediatria (SBP)</span></li>
-      <li><span class="cv-t">Certificação PALS — Pediatric Advanced Life Support</span><span class="cv-d">American Heart Association (AHA)</span></li>
-      <li><span class="cv-t">Graduação em Medicina</span><span class="cv-d">Centro Universitário Barão de Mauá · 2013</span></li>
-    </ol>
+    <div class="medals">
+      <div class="medal pop t-morango" style="--delay: 0s">
+        <span class="medal-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="18" r="10" fill="none" stroke="currentColor" stroke-width="4" /><path d="M16 26l-4 16 12-6 12 6-4-16" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" /></svg></span>
+        <h3>Título de Especialista em Pediatria</h3>
+        <p>Sociedade Brasileira de Pediatria (SBP)</p>
+      </div>
+      <div class="medal pop t-ceu" style="--delay: .12s">
+        <span class="medal-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 42 C 8 32, 4 20, 12 13 C 17 9, 22 11, 24 15 C 26 11, 31 9, 36 13 C 44 20, 40 32, 24 42 Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" /><path d="M12 25h7l3-5 4 9 3-4h7" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
+        <h3>Certificação PALS</h3>
+        <p>Pediatric Advanced Life Support · American Heart Association (AHA)</p>
+      </div>
+      <div class="medal pop t-uva" style="--delay: .24s">
+        <span class="medal-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M4 18l20-10 20 10-20 10z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" /><path d="M12 22v10c0 3 6 6 12 6s12-3 12-6V22" fill="none" stroke="currentColor" stroke-width="4" /></svg></span>
+        <h3>Graduação em Medicina</h3>
+        <p>Centro Universitário Barão de Mauá · 2013</p>
+      </div>
+    </div>
   </section>
 
   <!-- DÚVIDAS -->
-  <section id="duvidas" aria-labelledby="duvidas-t" style="background: var(--surface); border-top: 1px solid var(--line);">
-    <div class="reveal" style="max-width: 880px; margin: 0 auto; padding: 96px 24px; display: flex; flex-direction: column; gap: 32px;">
-      <h2 id="duvidas-t" class="h2">Dúvidas frequentes</h2>
-      <div class="faq">
+  <section id="duvidas" class="duvidas" aria-labelledby="duvidas-t">
+    <div class="duv-inner">
+      <div class="sec-head pop">
+        <p class="kicker">Dúvidas dos pais</p>
+        <h2 id="duvidas-t" class="h2">Perguntas que sempre aparecem</h2>
+      </div>
+      <div class="faq pop">
         {faq.map(([q, a]) => (
           <details>
             <summary>{q}</summary>
@@ -186,38 +286,144 @@ const faq = [
 </script>
 
 <style>
-  .hero { padding-top: 64px; padding-bottom: 64px; display: flex; flex-wrap: wrap; align-items: center; gap: 56px; }
-  .hero-text { flex: 1 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 24px; }
-  .hero-title { font-size: clamp(2.3rem, 4.4vw, 4rem); line-height: 1.05; letter-spacing: -0.025em; }
-  .hero-sub { font-size: 20px; line-height: 1.55; color: var(--muted); max-width: 560px; }
-  .proof { list-style: none; margin: 8px 0 0; padding: 20px 0 0; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 12px 32px; font-size: 15px; color: var(--muted); }
-  .proof li { display: flex; align-items: center; gap: 8px; }
-  .proof svg { color: var(--accent); flex: none; }
-  .hero-media { flex: 1 1 360px; min-width: 0; max-width: 470px; margin: 0 auto; position: relative; }
-  .hero-img { width: 100%; aspect-ratio: 575 / 950; object-fit: cover; object-position: 50% 100%; border-radius: 28px; }
-  .hero-card { position: absolute; right: -28px; top: 28px; max-width: 260px; background: #fff; color: var(--ink); text-decoration: none; border-radius: 18px; padding: 18px 20px; box-shadow: 0 18px 40px rgba(43, 27, 33, 0.14); display: flex; flex-direction: column; gap: 6px; transition: transform .18s var(--ease); }
-  .hero-card:hover { color: var(--ink); transform: translateY(-2px); }
-  @media (prefers-reduced-motion: no-preference) {
-    :global(.js) .hero-card { opacity: 0; animation: rise .4s var(--ease) .3s forwards; transform: translateY(8px); }
-  }
+  /* HERO */
+  .hero { position: relative; overflow: hidden; background: linear-gradient(180deg, #fff 0%, var(--cream) 100%); }
+  .hero-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 48px; padding-top: 56px; padding-bottom: 72px; }
+  .hero-text { flex: 1 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 22px; }
+  .hero-k { font-size: 20px; }
+  .hero-title { font-size: clamp(3rem, 6.6vw, 5.6rem); line-height: 0.98; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
+  .hero-sub { font-size: 21px; line-height: 1.55; color: var(--muted); max-width: 560px; font-weight: 600; }
+  .hero-ctas { display: flex; flex-wrap: wrap; gap: 14px; padding-top: 6px; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 15px; color: var(--ink); background: var(--menta-l); padding: 8px 16px; border-radius: 999px; align-self: flex-start; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--menta); box-shadow: 0 0 0 4px rgba(11,133,119,.18); }
+  .hero-art { flex: 1 1 360px; min-width: 0; position: relative; max-width: 450px; margin: 0 auto; padding: 24px 24px 40px; }
+  .blob-bg { position: absolute; inset: 6% 2% 10% 8%; background: var(--sol); border-radius: 58% 42% 50% 50% / 46% 52% 48% 54%; }
+  .photo-wrap { position: relative; border-radius: 46% 54% 44% 56% / 40% 42% 58% 60%; overflow: hidden; border: 6px solid #fff; box-shadow: 0 8px 0 rgba(59,47,69,.12); background: #fff; }
+  .photo { width: 100%; aspect-ratio: 575 / 690; object-fit: cover; object-position: 50% 100%; }
+  :global(.st) { position: absolute; filter: drop-shadow(0 4px 0 rgba(59,47,69,.15)); }
+  :global(.st1) { top: 4%; left: -2%; }
+  :global(.st2) { top: 14%; right: -4%; }
+  :global(.st3) { top: 52%; right: -6%; }
+  :global(.st4) { top: 40%; left: -6%; }
+  .bento-spot { position: absolute; left: -38px; bottom: -6px; display: flex; align-items: flex-start; }
+  .bubble { position: relative; margin-left: -8px; margin-top: 4px; background: #fff; border: 3px solid var(--ink); border-radius: 18px; padding: 8px 14px; font-family: var(--display); font-weight: 600; font-size: 16px; white-space: nowrap; box-shadow: 0 3px 0 var(--ink); }
   @media (max-width: 900px) {
-    .hero { padding-top: 40px; gap: 40px; }
-    .hero-card { position: static; max-width: none; margin-top: 16px; }
+    .hero-inner { padding-top: 32px; }
+    .bento-spot { left: -10px; }
+    .bento-spot :global(svg) { width: 110px; height: 121px; }
   }
-  .facts { margin: 12px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
-  .facts div { background: #fff; border-radius: 18px; padding: 20px 22px; }
-  .facts dt { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted-2); }
-  .facts dd { margin: 4px 0 0; font-weight: 600; color: var(--ink); }
-  .cv { flex: 1.4 1 460px; min-width: 0; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
-  .cv li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 24px; padding: 22px 0; border-top: 1px solid var(--line); }
-  .cv li:last-child { border-bottom: 1px solid var(--line); }
-  .cv-t { font-weight: 600; }
-  .cv-d { color: var(--muted-2); }
-  .faq { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
-  .faq details { border-bottom: 1px solid var(--line); padding: 22px 0; }
-  .faq summary { font-weight: 600; font-size: 19px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 16px; min-height: 44px; align-items: center; }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .hero-title .w { display: inline-block; opacity: 0; animation: spring-in .6s var(--spring) forwards; animation-delay: calc(var(--i) * 80ms + 100ms); }
+    :global(.js) .hero-k, :global(.js) .hero-sub, :global(.js) .hero-ctas, :global(.js) .hero-badge { opacity: 0; animation: spring-in .6s var(--spring) forwards; }
+    :global(.js) .hero-sub { animation-delay: .35s; }
+    :global(.js) .hero-ctas { animation-delay: .45s; }
+    :global(.js) .hero-badge { animation-delay: .55s; }
+    :global(.js) .blob-bg { animation: blob 9s ease-in-out infinite, spring-in .7s var(--spring) both; }
+    :global(.js) .photo-wrap { animation: spring-in .8s var(--spring) .15s both; }
+    :global(.js) :global(.st) { opacity: 0; animation: drop .7s var(--spring) forwards, float 5s ease-in-out infinite; }
+    :global(.js) :global(.st1) { animation-delay: .6s, 1.3s; }
+    :global(.js) :global(.st2) { animation-delay: .75s, 1.6s; animation-duration: .7s, 6s; }
+    :global(.js) :global(.st3) { animation-delay: .9s, 1.9s; animation-duration: .7s, 4.5s; }
+    :global(.js) :global(.st4) { animation-delay: 1.05s, 2.1s; animation-duration: .7s, 5.5s; }
+    :global(.js) .bento-spot { animation: spring-in .7s var(--spring) .5s both; }
+    :global(.js) .bubble { animation: spring-in .5s var(--spring) 1.2s both; }
+    @keyframes blob { 0%, 100% { border-radius: 58% 42% 50% 50% / 46% 52% 48% 54%; } 50% { border-radius: 44% 56% 58% 42% / 56% 44% 56% 44%; } }
+  }
+
+  /* LETREIRO */
+  .marquee { background: var(--sol); border-top: 3px solid var(--ink); border-bottom: 3px solid var(--ink); overflow: hidden; padding: 14px 0; }
+  .marquee-track { display: flex; width: max-content; }
+  .marquee ul { display: flex; gap: 36px; list-style: none; margin: 0; padding: 0 18px; }
+  .marquee li { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 600; font-size: 19px; white-space: nowrap; color: var(--ink); }
+  @media (prefers-reduced-motion: no-preference) {
+    .marquee-track { animation: marquee 32s linear infinite; }
+    .marquee:hover .marquee-track { animation-play-state: paused; }
+    @keyframes marquee { to { transform: translateX(-50%); } }
+  }
+
+  /* SEÇÕES */
+  .sec-head { display: flex; flex-direction: column; gap: 12px; align-items: center; text-align: center; max-width: 760px; margin: 0 auto; }
+  .sem { padding-top: 104px; padding-bottom: 96px; display: flex; flex-direction: column; gap: 44px; }
+  .sem-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 24px; }
+  .sem-card { --c: var(--menta); --l: var(--menta-l); --d: var(--menta-d); background: var(--l); border-radius: 28px; padding: 30px 28px; display: flex; flex-direction: column; gap: 14px; border: 3px solid var(--c); box-shadow: 0 6px 0 var(--c); }
+  .sem-y { --c: var(--sol-d); --l: var(--sol-l); }
+  .sem-r { --c: var(--morango); --l: var(--morango-l); }
+  .sem-card h3 { font-size: 26px; }
+  .sem-card ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-weight: 600; }
+  .sem-light { width: 44px; height: 44px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 8px #fff; }
+  .sem-g .sem-light { background: #19B394; }
+  .sem-y .sem-light { background: var(--sol); }
+  .sem-note { text-align: center; color: var(--muted); font-weight: 600; font-size: 16px; }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .sem-card.is-in .sem-light { animation: glow .8s var(--spring) both; animation-delay: calc(var(--delay, 0s) + .2s); }
+    @keyframes glow { 0% { transform: scale(.4); filter: brightness(.7); } 100% { transform: scale(1); filter: brightness(1.05); } }
+  }
+
+  .feat { background: var(--l); }
+  .feat-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 40px 72px; padding-top: 88px; padding-bottom: 88px; }
+  .feat-rev .feat-inner { flex-direction: row-reverse; }
+  .feat-art { flex: 1 1 340px; min-width: 0; display: flex; justify-content: center; }
+  .feat-copy { flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  .ill { width: 100%; max-width: 420px; height: auto; overflow: visible; }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .ill-talk .b1, :global(.js) .ill-talk .b2 { opacity: 0; transform-box: fill-box; transform-origin: 20% 100%; }
+    :global(.js) .is-in .ill-talk .b1 { animation: spring-in .6s var(--spring) .2s forwards; }
+    :global(.js) .is-in .ill-talk .b2 { animation: spring-in .6s var(--spring) .6s forwards; transform-origin: 80% 100%; }
+    .ill-talk .b2 circle { animation: typing 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .ill-talk .b2 circle:nth-child(4) { animation-delay: .2s; }
+    .ill-talk .b2 circle:nth-child(5) { animation-delay: .4s; }
+    @keyframes typing { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-7px); } }
+    .ill-book .spin { transform-box: fill-box; transform-origin: center; animation: spin 6s linear infinite; }
+    .ill-book .s2 { animation-duration: 8s; animation-direction: reverse; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    :global(.js) .ill-book .check { stroke-dasharray: 80; stroke-dashoffset: 80; }
+    :global(.js) .is-in .ill-book .check { animation: draw .7s var(--ease) .5s forwards; }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    :global(.js) .ill-thermo .merc { transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(.15); }
+    :global(.js) .is-in .ill-thermo .merc { animation: rise-m 1.2s var(--spring) .3s forwards; }
+    @keyframes rise-m { to { transform: scaleY(1); } }
+    .ill-thermo .pulse { transform-box: fill-box; transform-origin: center; animation: pulse 2.6s ease-in-out infinite; }
+    .ill-thermo .p2 { animation-delay: 1.3s; }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+  }
+
+  .dicas { padding-top: 104px; padding-bottom: 104px; display: flex; flex-direction: column; gap: 32px; }
+  .dicas-grid { display: flex; flex-wrap: wrap; gap: 24px; }
+  .dicas-main { flex: 2 1 520px; min-width: 0; display: flex; }
+  .dicas-main :global(.card) { flex: 1; }
+  .dicas-side { flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 24px; }
+  .dicas-side :global(.card) { flex: 1; }
+  .soon { border: 3px dashed var(--line); border-radius: 28px; padding: 26px 28px; display: flex; flex-direction: column; gap: 14px; }
+  .soon ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+  .soon li { background: var(--l); color: var(--c); font-weight: 800; font-size: 15px; padding: 8px 16px; border-radius: 999px; }
+
+  .sobre { background: var(--uva); color: #fff; }
+  .sobre-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 48px 72px; padding-top: 96px; padding-bottom: 96px; }
+  .sobre-photo { flex: 1 1 300px; min-width: 0; max-width: 400px; margin: 0 auto; position: relative; }
+  .sobre-img { width: 100%; aspect-ratio: 1 / 1.08; object-fit: cover; object-position: 50% 45%; border-radius: 40px; border: 6px solid #fff; transform: rotate(-3deg); box-shadow: 0 10px 0 var(--uva-d); }
+  .sobre-photo :global(.sobre-st) { position: absolute; right: -14px; top: -18px; }
+  .sobre-copy { flex: 1.3 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 16px; font-size: 19px; font-weight: 600; }
+  .sobre-copy blockquote { margin: 8px 0 0; background: #fff; color: var(--ink); border-radius: 24px; padding: 20px 24px; font-family: var(--display); font-size: 22px; font-weight: 500; line-height: 1.35; box-shadow: 0 5px 0 var(--uva-d); }
+
+  .formacao { padding-top: 104px; padding-bottom: 104px; display: flex; flex-direction: column; gap: 44px; }
+  .medals { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; }
+  .medal { background: #fff; border: 3px solid var(--line); border-radius: 28px; padding: 32px 26px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; box-shadow: 0 6px 0 var(--line); }
+  .medal h3 { font-size: 22px; line-height: 1.2; }
+  .medal p { color: var(--muted); font-weight: 600; font-size: 16px; }
+  .medal-icon { width: 88px; height: 88px; border-radius: 50%; background: var(--l); color: var(--c); display: grid; place-items: center; border: 4px solid var(--c); }
+  .medal-icon svg { width: 46px; height: 46px; }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .medal.is-in .medal-icon { animation: flip .9s var(--spring) both; animation-delay: calc(var(--delay, 0s) + .15s); }
+    @keyframes flip { from { transform: perspective(400px) rotateY(-180deg) scale(.7); } to { transform: perspective(400px) rotateY(0) scale(1); } }
+  }
+
+  .duvidas { background: var(--cream); border-top: 2px solid var(--line); }
+  .duv-inner { max-width: 860px; margin: 0 auto; padding: 96px 24px; display: flex; flex-direction: column; gap: 36px; }
+  .faq { display: flex; flex-direction: column; gap: 14px; }
+  .faq details { background: #fff; border: 2px solid var(--line); border-radius: 22px; padding: 6px 24px; box-shadow: 0 4px 0 var(--line); }
+  .faq summary { font-family: var(--display); font-weight: 600; font-size: 20px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 60px; }
   .faq summary::-webkit-details-marker { display: none; }
-  .faq summary::after { content: '+'; font-family: var(--display); font-size: 26px; color: var(--accent); transition: transform .2s var(--ease); }
-  .faq details[open] summary::after { transform: rotate(45deg); }
-  .faq p { margin-top: 12px; color: var(--muted); }
+  .faq summary::after { content: '+'; flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--morango-l); color: var(--morango); display: grid; place-items: center; font-size: 26px; line-height: 1; transition: transform .35s var(--spring); }
+  .faq details[open] summary::after { transform: rotate(135deg); }
+  .faq details p { padding: 0 0 18px; color: var(--muted); font-weight: 600; }
 </style>
