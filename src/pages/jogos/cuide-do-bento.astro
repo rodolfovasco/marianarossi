@@ -1,0 +1,198 @@
+---
+import GameShell from '../../components/GameShell.astro';
+import Bento from '../../components/Bento.astro';
+import Sticker from '../../components/Sticker.astro';
+---
+<GameShell title="Cuide dos dodóis do Bento" color="t-morango" intro="O Bento brincou demais e se machucou! Escolha o item certo e toque no dodói para cuidar dele, com as dicas da Tia Mari." description="Jogo de primeiros socorros: cuide dos machucados do Bento com as dicas da Tia Mari.">
+  <div class="score" aria-live="polite">
+    <span class="pill">Dodóis cuidados: <b data-done>0</b> de 3</span>
+  </div>
+  <p class="status" data-status role="status">Primeiro, escolha um item na maletinha.</p>
+
+  <div class="play">
+    <div class="patient">
+      <Bento size={300} wave={false} />
+      <button type="button" class="ouch o-bump" data-ouch="bump" aria-label="Galo na testa"><span class="mark"></span></button>
+      <button type="button" class="ouch o-cut" data-ouch="cut" aria-label="Cortinho na patinha"><span class="mark"></span></button>
+      <button type="button" class="ouch o-scrape" data-ouch="scrape" aria-label="Joelho ralado"><span class="mark"></span></button>
+      <span class="hearts" data-hearts aria-hidden="true">
+        <Sticker kind="heart" size={40} /><Sticker kind="heart" size={30} /><Sticker kind="heart" size={36} />
+      </span>
+    </div>
+
+    <div class="kit" role="group" aria-label="Maletinha de primeiros socorros">
+      <p class="kit-title">Maletinha</p>
+      <button type="button" class="tool" data-tool="wash" aria-pressed="false">
+        <Sticker kind="drop" size={44} /><span>Água e sabão</span>
+      </button>
+      <button type="button" class="tool" data-tool="gauze" aria-pressed="false">
+        <svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><rect x="10" y="14" width="44" height="36" rx="8" fill="#fff" stroke="#3B2F45" stroke-width="3" /><path d="M10 26h44M10 38h44M24 14v36M40 14v36" stroke="#E3D9E4" stroke-width="3" /></svg>
+        <span>Gaze</span>
+      </button>
+      <button type="button" class="tool" data-tool="ice" aria-pressed="false">
+        <svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><rect x="12" y="16" width="40" height="34" rx="9" fill="#DDF1FF" stroke="#3B2F45" stroke-width="3" /><path d="M20 26l8 8M36 24l6 6M24 40l5 4" stroke="#4FB6F0" stroke-width="3" stroke-linecap="round" /><path d="M8 50c8-6 40-6 48 0" stroke="#D63A63" stroke-width="5" fill="none" stroke-linecap="round" /></svg>
+        <span>Gelo no paninho</span>
+      </button>
+      <button type="button" class="tool" data-tool="bandaid" aria-pressed="false">
+        <Sticker kind="bandaid" size={44} /><span>Curativo</span>
+      </button>
+    </div>
+  </div>
+
+  <aside class="tip" data-tip aria-live="polite" hidden>
+    <p class="tip-k">Dica da Tia Mari</p>
+    <p data-tip-text></p>
+  </aside>
+
+  <section class="summary" data-summary hidden aria-labelledby="sum-t">
+    <h2 id="sum-t">O Bento está novinho em folha!</h2>
+    <ul>
+      <li><b>Ralado:</b> lave com água corrente e sabão, seque com delicadeza e cubra com um curativo limpo.</li>
+      <li><b>Cortinho sangrando:</b> aperte com gaze ou pano limpo por alguns minutos até parar; depois, curativo.</li>
+      <li><b>Galo na cabeça:</b> gelo enrolado num paninho, por alguns minutos, nunca direto na pele.</li>
+    </ul>
+    <p class="warn">Procure atendimento se o sangramento não parar, se o corte for fundo ou grande, ou se, depois de bater a cabeça, a criança vomitar, ficar muito sonolenta, desmaiar ou agir diferente do normal. Em emergência, ligue 192.</p>
+    <button type="button" class="btn" data-restart>Brincar de novo</button>
+  </section>
+</GameShell>
+
+<script>
+  type Tool = 'wash' | 'gauze' | 'ice' | 'bandaid';
+  const plan: Record<string, { name: string; steps: { tool: Tool; ok: string; tip: string }[]; hint: string }> = {
+    scrape: { name: 'joelho ralado', hint: 'Antes de tudo, o ralado precisa ficar limpinho.', steps: [
+      { tool: 'wash', ok: 'Joelho lavadinho!', tip: 'Lave o ralado com água corrente e sabão, sem esfregar forte. Depois, seque com delicadeza.' },
+      { tool: 'bandaid', ok: 'Curativo no lugar!', tip: 'Cubra com um curativo limpo e troque se molhar ou sujar.' },
+    ] },
+    cut: { name: 'cortinho na patinha', hint: 'Primeiro, precisamos fazer parar de sangrar.', steps: [
+      { tool: 'gauze', ok: 'Parou de sangrar!', tip: 'Aperte o cortinho com gaze ou um pano limpo por alguns minutos, sem ficar levantando para olhar.' },
+      { tool: 'wash', ok: 'Limpinho!', tip: 'Quando parar de sangrar, lave com água e sabão.' },
+      { tool: 'bandaid', ok: 'Patinha protegida!', tip: 'Cubra com curativo. Se o corte for fundo ou não parar de sangrar, procure atendimento.' },
+    ] },
+    bump: { name: 'galo na testa', hint: 'Galo pede algo geladinho, mas com cuidado.', steps: [
+      { tool: 'ice', ok: 'O galo diminuiu!', tip: 'Gelo enrolado num paninho por alguns minutos ajuda no inchaço. Nunca coloque o gelo direto na pele.' },
+    ] },
+  };
+  const toolNames: Record<Tool, string> = { wash: 'água e sabão', gauze: 'gaze', ice: 'gelo', bandaid: 'curativo' };
+  const nextHint: Record<Tool, string> = { wash: 'Ele precisa ficar limpinho.', gauze: 'Primeiro, precisamos fazer parar de sangrar.', ice: 'Galo pede algo geladinho, com cuidado.', bandaid: 'Agora é hora de proteger o dodói.' };
+
+  const status = document.querySelector('[data-status]')!;
+  const doneEl = document.querySelector('[data-done]')!;
+  const tipBox = document.querySelector<HTMLElement>('[data-tip]')!;
+  const tipText = document.querySelector('[data-tip-text]')!;
+  const summary = document.querySelector<HTMLElement>('[data-summary]')!;
+  const hearts = document.querySelector<HTMLElement>('[data-hearts]')!;
+  const tools = Array.from(document.querySelectorAll<HTMLButtonElement>('.tool'));
+  const ouches = Array.from(document.querySelectorAll<HTMLButtonElement>('.ouch'));
+  let sel: Tool | null = null;
+  let progress: Record<string, number> = {};
+
+  function reset() {
+    progress = { scrape: 0, cut: 0, bump: 0 }; sel = null;
+    tools.forEach((t) => t.setAttribute('aria-pressed', 'false'));
+    ouches.forEach((o) => { o.className = `ouch o-${o.dataset.ouch}`; o.disabled = false; });
+    doneEl.textContent = '0'; tipBox.hidden = true; summary.hidden = true; hearts.classList.remove('on');
+    status.textContent = 'Primeiro, escolha um item na maletinha.';
+  }
+
+  tools.forEach((t) => t.addEventListener('click', () => {
+    sel = t.dataset.tool as Tool;
+    tools.forEach((x) => x.setAttribute('aria-pressed', String(x === t)));
+    status.textContent = `Você pegou: ${toolNames[sel]}. Agora toque no dodói.`;
+  }));
+
+  ouches.forEach((o) => o.addEventListener('click', () => {
+    const k = o.dataset.ouch!, p = plan[k], step = p.steps[progress[k]];
+    if (!step) return;
+    if (!sel) { status.textContent = 'Escolha um item na maletinha primeiro!'; o.classList.add('nudge'); setTimeout(() => o.classList.remove('nudge'), 450); return; }
+    if (sel !== step.tool) {
+      status.textContent = `Hmm, ${toolNames[sel]} não é o melhor agora para o ${p.name}. ${nextHint[step.tool]}`;
+      o.classList.add('nudge'); setTimeout(() => o.classList.remove('nudge'), 450);
+      return;
+    }
+    progress[k]++;
+    o.classList.add(`s${progress[k]}`, `t-${sel}`);
+    tipText.textContent = step.tip; tipBox.hidden = false;
+    tipBox.classList.remove('flash'); void tipBox.offsetWidth; tipBox.classList.add('flash');
+    if (progress[k] === p.steps.length) {
+      o.classList.add('healed'); o.disabled = true;
+      const done = Object.keys(plan).filter((x) => progress[x] === plan[x].steps.length).length;
+      doneEl.textContent = String(done);
+      status.textContent = `${step.ok} Mais um dodói cuidado.`;
+      if (done === 3) {
+        status.textContent = 'Obrigado, Tia Mari! O Bento está ótimo!';
+        hearts.classList.add('on');
+        setTimeout(() => { summary.hidden = false; summary.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 600);
+      }
+    } else {
+      status.textContent = `${step.ok} E agora, qual é o próximo passo?`;
+    }
+    sel = null; tools.forEach((x) => x.setAttribute('aria-pressed', 'false'));
+  }));
+
+  document.querySelector('[data-restart]')!.addEventListener('click', reset);
+  reset();
+</script>
+
+<style>
+  .score { display: flex; justify-content: center; }
+  .pill { background: #fff; border: 2px solid var(--line); border-radius: 999px; padding: 6px 16px; font-weight: 800; }
+  .status { font-family: var(--display); font-weight: 600; font-size: 23px; text-align: center; min-height: 2.8em; max-width: 640px; }
+  .play { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 24px 48px; width: 100%; }
+  .patient { position: relative; width: 300px; max-width: 80vw; aspect-ratio: 200 / 220; }
+  .patient > :global(svg.bento) { width: 100%; height: auto; }
+
+  .ouch { position: absolute; transform: translate(-50%, -50%); background: none; border: 0; padding: 0; cursor: pointer; width: 64px; height: 64px; display: grid; place-items: center; border-radius: 50%; }
+  .ouch::before { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 3px dashed #D63A63; opacity: .8; }
+  .ouch.healed::before { display: none; }
+  .o-bump { left: 50%; top: 17%; }
+  .o-cut { left: 82%; top: 58%; }
+  .o-scrape { left: 34%; top: 92%; }
+  .mark { position: relative; display: block; transition: transform .4s var(--spring), background .3s, opacity .3s; }
+  /* galo */
+  .o-bump .mark { width: 34px; height: 30px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #FFB3C4, #E8638A); border: 3px solid #A82748; }
+  .o-bump.t-ice .mark { transform: scale(.45); opacity: .5; }
+  /* cortinho */
+  .o-cut .mark { width: 30px; height: 8px; border-radius: 4px; background: #D63A63; transform: rotate(-30deg); box-shadow: 0 0 0 4px rgba(214,58,99,.25); }
+  .o-cut.s1 .mark { box-shadow: none; }
+  .o-cut.s2 .mark { background: #E8638A; }
+  /* ralado */
+  .o-scrape .mark { width: 40px; height: 26px; border-radius: 40% 60% 45% 55%; background: repeating-linear-gradient(-20deg, #E8638A 0 4px, #FF9DB5 4px 8px); border: 2px solid #A82748; }
+  .o-scrape.s1 .mark { filter: saturate(.6) brightness(1.1); }
+  /* curativo aplicado */
+  .ouch.t-bandaid .mark { width: 54px; height: 22px; border-radius: 11px; background: #FFD7A3; border: 3px solid #3B2F45; box-shadow: inset 16px 0 0 #FFD7A3, inset -16px 0 0 #FFD7A3, inset 0 0 0 40px #FFE7C7; transform: rotate(-20deg); }
+  .ouch.nudge { animation: nudge .4s ease-in-out; }
+  @keyframes nudge { 0%, 100% { translate: 0; } 25% { translate: -6px; } 75% { translate: 6px; } }
+
+  .hearts { position: absolute; inset: 0; pointer-events: none; }
+  .hearts :global(svg) { position: absolute; opacity: 0; }
+  .hearts :global(svg:nth-child(1)) { left: 4%; top: 6%; }
+  .hearts :global(svg:nth-child(2)) { right: 2%; top: 2%; }
+  .hearts :global(svg:nth-child(3)) { right: 10%; top: 30%; }
+  .hearts.on :global(svg) { opacity: 1; }
+
+  .kit { display: flex; flex-direction: column; gap: 10px; background: #fff; border: 3px solid var(--ink); border-radius: 26px; padding: 18px; box-shadow: 0 6px 0 var(--ink); min-width: 230px; }
+  .kit-title { font-family: var(--display); font-weight: 600; font-size: 20px; text-align: center; }
+  .tool { display: flex; align-items: center; gap: 12px; font: inherit; font-weight: 800; font-size: 17px; color: var(--ink); background: var(--cream); border: 2px solid var(--line); border-radius: 16px; padding: 8px 14px; cursor: pointer; min-height: 60px; transition: transform .2s var(--spring), border-color .2s, background .2s; }
+  .tool:hover { transform: translateX(3px); border-color: var(--morango); }
+  .tool[aria-pressed="true"] { background: var(--sol-l); border-color: var(--sol-d); box-shadow: 0 0 0 3px var(--sol); }
+  .tool :global(svg) { flex: none; }
+
+  .tip { width: min(640px, 100%); background: #fff; border: 3px solid var(--morango); border-radius: 24px; padding: 18px 22px; box-shadow: 0 5px 0 var(--morango); display: flex; flex-direction: column; gap: 4px; font-weight: 700; }
+  .tip-k { font-family: var(--display); font-weight: 600; color: var(--morango); font-size: 18px; }
+  .summary { width: min(640px, 100%); background: #fff; border: 3px solid var(--ink); border-radius: 28px; padding: 26px 28px; box-shadow: 0 6px 0 var(--ink); display: flex; flex-direction: column; gap: 14px; }
+  .summary h2 { font-size: 28px; }
+  .summary ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-weight: 600; }
+  .warn { background: var(--morango-l); border-radius: 16px; padding: 12px 16px; font-weight: 700; color: var(--morango-d); font-size: 16px; }
+  .summary .btn { align-self: flex-start; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .ouch:not(.healed)::before { animation: ring 1.6s ease-in-out infinite; }
+    @keyframes ring { 0%, 100% { transform: scale(1); opacity: .8; } 50% { transform: scale(1.12); opacity: .4; } }
+    .tip.flash { animation: spring-in .45s var(--spring); }
+    .hearts.on :global(svg) { animation: heartup 1.2s var(--spring) both; }
+    .hearts.on :global(svg:nth-child(2)) { animation-delay: .15s; }
+    .hearts.on :global(svg:nth-child(3)) { animation-delay: .3s; }
+    @keyframes heartup { from { opacity: 0; transform: translateY(20px) scale(.4); } to { opacity: 1; transform: translateY(-10px) scale(1); } }
+    .ouch.healed .mark { animation: spring-in .5s var(--spring); }
+  }
+</style>
