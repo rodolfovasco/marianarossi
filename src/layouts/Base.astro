@@ -126,7 +126,7 @@ const ogImage = new URL(url('/og-image.jpg'), Astro.site);
         const action = form.getAttribute('action');
         if (!action) { say('As inscrições abrem em breve. Obrigada pelo carinho!'); return; }
 
-        const nome = form.querySelector<HTMLInputElement>('input[name=NOME]');
+        const nome = form.querySelector<HTMLInputElement>('input[name=FIRSTNAME]');
         const email = form.querySelector<HTMLInputElement>('input[name=EMAIL]');
         if (nome && !nome.value.trim()) { say('Me conta como posso te chamar?'); nome.focus(); return; }
         if (email && !email.checkValidity()) { say('Esse e-mail parece incompleto. Confere pra mim?'); email.focus(); return; }
@@ -146,7 +146,7 @@ const ogImage = new URL(url('/og-image.jpg'), Astro.site);
         if (ok) {
           dl.push({ event: 'newsletter_submit', form_location: location.pathname, newsletter_active: true });
           form.reset();
-          say('Pronto! Agora é só confirmar a inscrição no e-mail que enviamos (confere o spam, se não achar).');
+          say('Inscrição feita! As próximas Dicas da Tia Mari vão chegar no seu e-mail.');
           if (btn) btn.textContent = 'Inscrição enviada!';
         } else {
           dl.push({ event: 'newsletter_error', form_location: location.pathname });

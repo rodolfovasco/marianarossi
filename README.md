@@ -76,7 +76,7 @@ O tempo de leitura é calculado automaticamente. O artigo mais recente vira o de
 
 ## Newsletter (Brevo)
 
-O formulário envia para a lista "Dicas da Tia Mari" no Brevo, sem sair da página. Os campos são NOME, EMAIL e TEMA (a dúvida sugerida, opcional). O endereço do formulário fica em `newsletterAction`, no arquivo `src/lib/site.ts`. Se trocar o formulário no Brevo, basta colar o novo endereço (o `action` do código HTML de incorporação).
+O formulário envia para a lista "Dicas da Tia Mari" no Brevo, sem sair da página. Os campos são FIRSTNAME (nome), EMAIL e TEMA (a dúvida sugerida, opcional). O endereço do formulário fica em `newsletterAction`, no arquivo `src/lib/site.ts`. Se trocar o formulário no Brevo, basta colar o novo endereço (o `action` do código HTML de incorporação).
 
 Eventos no GTM: `newsletter_submit` (inscrição enviada com sucesso) e `newsletter_error` (falha no envio).
 

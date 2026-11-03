@@ -21,7 +21,7 @@ const {
     <form class="form nl-form pop" style="--delay: .1s" data-newsletter action={site.newsletterAction || undefined} method="post">
       <div class="form-row">
         <label class="field">Seu nome
-          <input type="text" name="NOME" autocomplete="given-name" placeholder="Como posso te chamar?" maxlength="200" required />
+          <input type="text" name="FIRSTNAME" autocomplete="given-name" placeholder="Como posso te chamar?" maxlength="200" required />
         </label>
         <label class="field" style="flex-grow: 1.4;">Seu e-mail
           <input type="email" name="EMAIL" autocomplete="email" placeholder="voce@email.com" required />
@@ -33,7 +33,7 @@ const {
       </label>
       <!-- campos técnicos do Brevo: armadilha anti-robô e idioma -->
       <input type="text" name="email_address_check" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0;" />
-      <input type="hidden" name="locale" value="pt" />
+      <input type="hidden" name="locale" value="en" />
       <button type="submit" class="btn btn-sun" style="align-self: flex-start;" data-submit>Quero receber as dicas</button>
       <p class="form-status" data-status role="status" aria-live="polite"></p>
       <p style="font-size: 15px; color: #fff;">Você cancela com um clique quando quiser. Seus dados seguem a <a href={url('/privacidade/')} style="color: #fff; font-weight: 800;">Política de Privacidade</a>.</p>
