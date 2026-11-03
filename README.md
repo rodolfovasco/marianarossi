@@ -2,8 +2,7 @@
 
 Site em [Astro](https://astro.build), publicado no GitHub Pages. Cada alteração enviada para a branch `main` é publicada sozinha em cerca de 1 a 2 minutos (aba **Actions** mostra o andamento).
 
-- Endereço atual: https://rodolfovasco.github.io/marianarossi/
-- Futuro: https://www.marianarossi.com.br (veja "Usar o domínio próprio")
+- Endereço: https://www.marianarossi.com.br (hospedado no GitHub Pages, DNS no Cloudflare)
 
 ---
 
