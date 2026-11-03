@@ -74,9 +74,11 @@ O tempo de leitura é calculado automaticamente. O artigo mais recente vira o de
 - **Cores e fontes**: `src/styles/global.css` (variáveis no topo)
 - **Foto**: `src/assets/mariana.jpg` (rosto do autor: `src/assets/avatar.jpg`)
 
-## Newsletter
+## Newsletter (Brevo)
 
-O formulário já está pronto, mas precisa de um serviço para guardar os e-mails (por exemplo, Buttondown, Brevo ou Mailchimp). Crie a conta, copie o endereço de envio do formulário (form action) e cole em `newsletterAction` no arquivo `src/lib/site.ts`. Enquanto estiver vazio, o site avisa que as inscrições abrem em breve.
+O formulário envia para a lista "Dicas da Tia Mari" no Brevo, sem sair da página. Os campos são NOME, EMAIL e TEMA (a dúvida sugerida, opcional). O endereço do formulário fica em `newsletterAction`, no arquivo `src/lib/site.ts`. Se trocar o formulário no Brevo, basta colar o novo endereço (o `action` do código HTML de incorporação).
+
+Eventos no GTM: `newsletter_submit` (inscrição enviada com sucesso) e `newsletter_error` (falha no envio).
 
 ## Teste A/B do topo da home
 

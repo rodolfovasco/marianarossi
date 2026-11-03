@@ -12,9 +12,10 @@ export const site = {
   description:
     'Dicas da Tia Mari: a pediatra Dra. Mariana Rossi explica o que observar em casa, o que fazer e quando procurar atendimento, sem susto e com base em evidência.',
 
-  // Endereço do formulário da newsletter (Buttondown, Brevo, Mailchimp...).
-  // Enquanto estiver vazio, o formulário avisa que as inscrições abrem em breve.
-  newsletterAction: '',
+  // Endereço do formulário de inscrição do Brevo (lista "Dicas da Tia Mari").
+  // Campos esperados pelo Brevo: NOME, EMAIL e TEMA.
+  // Se ficar vazio, o formulário avisa que as inscrições abrem em breve.
+  newsletterAction: 'https://a7fd5610.sibforms.com/serve/MUIFALKfVgYJV4jjns8qJxKrrRZIJPZTlCIoeeS7AsbKX5fKD224S8d6bJPVtQJoPH3R-G2FJkGYNC2TxVJwc8_uVKXDDdtlDx7DDMxuh4zxqpag28QQtxLwAeP8VyJJfnDiCw_wwBY5NWfPpY9Y4jA3D08hMbjQSrCRzabikVvZo0hQ7ic825Zf45qlG4RDOXE1Ay3MEGA28LJblg==',
 
   // Google Tag Manager
   gtmId: 'GTM-K88KVQ2N',

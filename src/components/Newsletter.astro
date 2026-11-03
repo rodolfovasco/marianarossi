@@ -21,17 +21,20 @@ const {
     <form class="form nl-form pop" style="--delay: .1s" data-newsletter action={site.newsletterAction || undefined} method="post">
       <div class="form-row">
         <label class="field">Seu nome
-          <input type="text" name="nome" autocomplete="given-name" placeholder="Como posso te chamar?" />
+          <input type="text" name="NOME" autocomplete="given-name" placeholder="Como posso te chamar?" maxlength="200" required />
         </label>
         <label class="field" style="flex-grow: 1.4;">Seu e-mail
-          <input type="email" name="email" autocomplete="email" placeholder="voce@email.com" required />
+          <input type="email" name="EMAIL" autocomplete="email" placeholder="voce@email.com" required />
         </label>
       </div>
       <label class="field">
         <span>Qual dúvida você quer que eu explique? <span style="font-weight: 600; opacity: .85;">(opcional)</span></span>
-        <input type="text" name="tema" placeholder="Ex.: quando dar o primeiro banho de mar" />
+        <input type="text" name="TEMA" maxlength="200" placeholder="Ex.: quando dar o primeiro banho de mar" />
       </label>
-      <button type="submit" class="btn btn-sun" style="align-self: flex-start;">Quero receber as dicas</button>
+      <!-- campos técnicos do Brevo: armadilha anti-robô e idioma -->
+      <input type="text" name="email_address_check" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0;" />
+      <input type="hidden" name="locale" value="pt" />
+      <button type="submit" class="btn btn-sun" style="align-self: flex-start;" data-submit>Quero receber as dicas</button>
       <p class="form-status" data-status role="status" aria-live="polite"></p>
       <p style="font-size: 15px; color: #fff;">Você cancela com um clique quando quiser. Seus dados seguem a <a href={url('/privacidade/')} style="color: #fff; font-weight: 800;">Política de Privacidade</a>.</p>
     </form>
@@ -42,7 +45,7 @@ const {
   .nl { position: relative; overflow: hidden; background: var(--morango); color: #fff; }
   .nl-inner { position: relative; padding-top: 88px; padding-bottom: 80px; display: flex; flex-wrap: wrap; gap: 40px 56px; align-items: center; }
   .nl-copy { flex: 1 1 400px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
-  .nl-form { flex: 1 1 420px; min-width: 0; background: rgba(0,0,0,0.12); border-radius: 28px; padding: 28px; }
+  .nl-form { position: relative; flex: 1 1 420px; min-width: 0; background: rgba(0,0,0,0.12); border-radius: 28px; padding: 28px; }
   .nl :global(.nl-s1) { position: absolute; top: 34px; right: 7%; }
   .nl :global(.nl-s2) { position: absolute; bottom: 36px; left: 4%; }
   @media (max-width: 700px) { .nl :global(.nl-s1), .nl :global(.nl-s2) { display: none; } }

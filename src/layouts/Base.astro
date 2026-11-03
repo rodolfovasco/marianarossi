@@ -116,20 +116,42 @@ const ogImage = new URL(url('/og-image.jpg'), Astro.site);
       if (el) dl.push({ event: el.dataset.event, event_label: el.dataset.label || el.textContent?.trim().slice(0, 80), link_url: (el as HTMLAnchorElement).href || undefined });
     });
 
-    // Formulário da newsletter.
+    // Formulário da newsletter (Brevo). Envia sem sair da página.
     document.querySelectorAll<HTMLFormElement>('form[data-newsletter]').forEach((form) => {
-      form.addEventListener('submit', (ev) => {
-        const status = form.querySelector('[data-status]');
-        dl.push({ event: 'newsletter_submit', form_location: location.pathname, newsletter_active: Boolean(form.getAttribute('action')) });
-        if (!form.getAttribute('action')) {
-          ev.preventDefault();
-          if (status) status.textContent = 'As inscrições abrem em breve. Obrigada pelo carinho!';
-          return;
+      form.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const status = form.querySelector<HTMLElement>('[data-status]');
+        const btn = form.querySelector<HTMLButtonElement>('[data-submit]');
+        const say = (t: string) => { if (status) status.textContent = t; };
+        const action = form.getAttribute('action');
+        if (!action) { say('As inscrições abrem em breve. Obrigada pelo carinho!'); return; }
+
+        const nome = form.querySelector<HTMLInputElement>('input[name=NOME]');
+        const email = form.querySelector<HTMLInputElement>('input[name=EMAIL]');
+        if (nome && !nome.value.trim()) { say('Me conta como posso te chamar?'); nome.focus(); return; }
+        if (email && !email.checkValidity()) { say('Esse e-mail parece incompleto. Confere pra mim?'); email.focus(); return; }
+
+        const data = new FormData(form);
+        if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
+        say('');
+        let ok = false;
+        try {
+          const res = await fetch(action + (action.includes('?') ? '&' : '?') + 'isAjax=1', { method: 'POST', body: data });
+          const json = await res.json().catch(() => null);
+          ok = res.ok && (!json || json.success !== false);
+        } catch {
+          // Se o navegador bloquear a resposta, o envio ainda é feito; não dá só para ler o retorno.
+          try { await fetch(action, { method: 'POST', body: data, mode: 'no-cors' }); ok = true; } catch { ok = false; }
         }
-        const email = form.querySelector<HTMLInputElement>('input[type=email]');
-        if (email && !email.checkValidity()) {
-          ev.preventDefault();
-          if (status) status.textContent = 'Esse e-mail parece incompleto. Confere pra mim?';
+        if (ok) {
+          dl.push({ event: 'newsletter_submit', form_location: location.pathname, newsletter_active: true });
+          form.reset();
+          say('Pronto! Agora é só confirmar a inscrição no e-mail que enviamos (confere o spam, se não achar).');
+          if (btn) btn.textContent = 'Inscrição enviada!';
+        } else {
+          dl.push({ event: 'newsletter_error', form_location: location.pathname });
+          say('Ops, não deu certo agora. Tenta de novo em instantes?');
+          if (btn) { btn.disabled = false; btn.textContent = 'Quero receber as dicas'; }
         }
       });
     });
