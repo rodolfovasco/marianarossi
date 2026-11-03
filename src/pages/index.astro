@@ -63,7 +63,7 @@ const faq = [
       <div class="hero-art">
         <div class="blob-bg"></div>
         <div class="photo-wrap">
-          <Image src={foto} alt="Dra. Mariana Rossi, a Tia Mari, sorrindo enquanto escreve no notebook" widths={[400, 575]} sizes="(max-width: 900px) 80vw, 440px" loading="eager" fetchpriority="high" class="photo" />
+          <Image src={foto} alt="Dra. Mariana Rossi, a Tia Mari, sorrindo de jaleco rosa e estetoscópio" widths={[400, 640, 900]} sizes="(max-width: 900px) 80vw, 440px" loading="eager" fetchpriority="high" class="photo" />
         </div>
         <Sticker kind="thermo" size={74} class="st st1" style="--rot: 14deg" />
         <Sticker kind="bandaid" size={70} class="st st2" style="--rot: -8deg" />
@@ -385,7 +385,7 @@ const faq = [
   .hero-art { flex: 1 1 360px; min-width: 0; position: relative; max-width: 450px; margin: 0 auto; padding: 24px 24px 40px; }
   .blob-bg { position: absolute; inset: 6% 2% 10% 8%; background: var(--sol); border-radius: 58% 42% 50% 50% / 46% 52% 48% 54%; }
   .photo-wrap { position: relative; border-radius: 46% 54% 44% 56% / 40% 42% 58% 60%; overflow: hidden; border: 6px solid #fff; box-shadow: 0 8px 0 rgba(59,47,69,.12); background: #fff; }
-  .photo { width: 100%; aspect-ratio: 575 / 690; object-fit: cover; object-position: 50% 100%; }
+  .photo { width: 100%; aspect-ratio: 575 / 690; object-fit: cover; object-position: 50% 30%; }
   :global(.st) { position: absolute; filter: drop-shadow(0 4px 0 rgba(59,47,69,.15)); }
   :global(.st1) { top: 4%; left: -2%; }
   :global(.st2) { top: 14%; right: -4%; }
@@ -488,7 +488,7 @@ const faq = [
   .sobre { background: var(--uva); color: #fff; }
   .sobre-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 48px 72px; padding-top: 96px; padding-bottom: 96px; }
   .sobre-photo { flex: 1 1 300px; min-width: 0; max-width: 400px; margin: 0 auto; position: relative; }
-  .sobre-img { width: 100%; aspect-ratio: 1 / 1.08; object-fit: cover; object-position: 50% 45%; border-radius: 40px; border: 6px solid #fff; transform: rotate(-3deg); box-shadow: 0 10px 0 var(--uva-d); }
+  .sobre-img { width: 100%; aspect-ratio: 1 / 1.08; object-fit: cover; object-position: 50% 28%; border-radius: 40px; border: 6px solid #fff; transform: rotate(-3deg); box-shadow: 0 10px 0 var(--uva-d); }
   .sobre-photo :global(.sobre-st) { position: absolute; right: -14px; top: -18px; }
   .sobre-copy { flex: 1.3 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 16px; font-size: 19px; font-weight: 600; }
   .sobre-copy blockquote { margin: 8px 0 0; background: #fff; color: var(--ink); border-radius: 24px; padding: 20px 24px; font-family: var(--display); font-size: 22px; font-weight: 500; line-height: 1.35; box-shadow: 0 5px 0 var(--uva-d); }
