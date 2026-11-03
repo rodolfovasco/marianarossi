@@ -15,6 +15,9 @@ export const site = {
   // Endereço do formulário da newsletter (Buttondown, Brevo, Mailchimp...).
   // Enquanto estiver vazio, o formulário avisa que as inscrições abrem em breve.
   newsletterAction: '',
+
+  // Google Tag Manager
+  gtmId: 'GTM-K88KVQ2N',
 };
 
 // Temas dos artigos e a cor de cada um. Para criar um tema novo,

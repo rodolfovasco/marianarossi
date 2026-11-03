@@ -18,6 +18,11 @@ const ogImage = new URL(url('/og-image.jpg'), Astro.site);
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
+  {site.gtmId && (
+    <script is:inline define:vars={{ gtmId: site.gtmId }}>
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer',gtmId);
+    </script>
+  )}
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{pageTitle}</title>
   <meta name="description" content={description} />
@@ -39,6 +44,9 @@ const ogImage = new URL(url('/og-image.jpg'), Astro.site);
   {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
 </head>
 <body>
+  {site.gtmId && (
+    <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${site.gtmId}`} height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+  )}
   <a class="skip" href="#conteudo">Pular para o conteúdo</a>
   <header class="site-header">
     <div class="wrap">
@@ -58,7 +66,7 @@ const ogImage = new URL(url('/og-image.jpg'), Astro.site);
         <a href={url('/#brincar')}>Brincar</a>
         <a class="nav-hide" href={url('/#sobre')}>Sobre</a>
         <a class="nav-hide" href={url('/#duvidas')}>Dúvidas</a>
-        <a class="btn btn-sm" href={url('/#receber')}>Receber dicas</a>
+        <a class="btn btn-sm" href={url('/#receber')} data-event="cta_header_newsletter">Receber dicas</a>
       </nav>
     </div>
   </header>
@@ -101,10 +109,18 @@ const ogImage = new URL(url('/og-image.jpg'), Astro.site);
       pops.forEach((el) => el.classList.add('is-in'));
     }
 
+    // Eventos para o Google Tag Manager (dataLayer).
+    const dl = ((window as any).dataLayer = (window as any).dataLayer || []);
+    document.addEventListener('click', (ev) => {
+      const el = (ev.target as HTMLElement).closest<HTMLElement>('[data-event]');
+      if (el) dl.push({ event: el.dataset.event, event_label: el.dataset.label || el.textContent?.trim().slice(0, 80), link_url: (el as HTMLAnchorElement).href || undefined });
+    });
+
     // Formulário da newsletter.
     document.querySelectorAll<HTMLFormElement>('form[data-newsletter]').forEach((form) => {
       form.addEventListener('submit', (ev) => {
         const status = form.querySelector('[data-status]');
+        dl.push({ event: 'newsletter_submit', form_location: location.pathname, newsletter_active: Boolean(form.getAttribute('action')) });
         if (!form.getAttribute('action')) {
           ev.preventDefault();
           if (status) status.textContent = 'As inscrições abrem em breve. Obrigada pelo carinho!';

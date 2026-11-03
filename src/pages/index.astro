@@ -54,8 +54,8 @@ const faq = [
         </h1>
         <p class="hero-sub" data-hero="sub">{hero.sub}</p>
         <div class="hero-ctas">
-          <a class="btn" href={url('/artigos/')} data-hero="cta">{hero.cta}</a>
-          <a class="btn btn-white" href="#sobre">Conhecer a Tia Mari</a>
+          <a class="btn" href={url('/artigos/')} data-hero="cta" data-event="cta_hero_click">{hero.cta}</a>
+          <a class="btn btn-white" href="#sobre" data-event="cta_hero_secondary">Conhecer a Tia Mari</a>
         </div>
         <p class="hero-badge"><span class="dot"></span>{site.role} · {site.crm} · {site.rqe}</p>
       </div>
@@ -69,7 +69,7 @@ const faq = [
         <Sticker kind="bandaid" size={70} class="st st2" style="--rot: -8deg" />
         <Sticker kind="star" size={58} class="st st3" style="--rot: 12deg" />
         <Sticker kind="drop" size={50} class="st st4" style="--rot: -10deg" />
-        <a class="bento-spot" href="#brincar" aria-label="Oi, eu sou o Bento! Vamos brincar? Ir para os jogos">
+        <a class="bento-spot" href="#brincar" data-event="bento_hero_click" data-label="Bento hero" aria-label="Oi, eu sou o Bento! Vamos brincar? Ir para os jogos">
           <Bento size={150} />
           <span class="bubble">Oi, eu sou o Bento!<br />Vamos brincar?</span>
         </a>
@@ -224,7 +224,7 @@ const faq = [
         </div>
       </div>
       <div class="games">
-        <a class="game t-morango pop" href={url('/jogos/jogo-da-velha/')} style="--delay: 0s">
+        <a data-event="game_open" class="game t-morango pop" href={url('/jogos/jogo-da-velha/')} data-label="Jogo da velha" style="--delay: 0s">
           <div class="game-art" aria-hidden="true">
             <div class="mini-board">
               {['heart','','star','','heart','','star','','heart'].map((k) => <span>{k && <Sticker kind={k as any} size={30} />}</span>)}
@@ -235,7 +235,7 @@ const faq = [
           <p>Coração contra estrela. Faça uma linha de três antes do Bento!</p>
           <span class="game-cta">Jogar <span class="arrow">→</span></span>
         </a>
-        <a class="game t-uva pop" href={url('/jogos/jogo-da-memoria/')} style="--delay: .12s">
+        <a data-event="game_open" class="game t-uva pop" href={url('/jogos/jogo-da-memoria/')} data-label="Jogo da memória" style="--delay: .12s">
           <div class="game-art" aria-hidden="true">
             <div class="mini-cards">
               <span class="mc mc1"><Sticker kind="thermo" size={40} /></span>
@@ -248,7 +248,7 @@ const faq = [
           <p>Vire as cartas e encontre os pares de figurinhas.</p>
           <span class="game-cta">Jogar <span class="arrow">→</span></span>
         </a>
-        <a class="game t-ceu pop" href={url('/jogos/estoura-bolhas/')} style="--delay: .24s">
+        <a data-event="game_open" class="game t-ceu pop" href={url('/jogos/estoura-bolhas/')} data-label="Estoura bolhas" style="--delay: .24s">
           <div class="game-art" aria-hidden="true">
             <span class="bb b1"></span><span class="bb b2"></span><span class="bb b3"></span><span class="bb b4"></span>
           </div>
@@ -257,7 +257,7 @@ const faq = [
           <p>É só tocar nas bolhas coloridas antes que elas voem embora.</p>
           <span class="game-cta">Jogar <span class="arrow">→</span></span>
         </a>
-        <a class="game t-morango pop" href={url('/jogos/cuide-do-bento/')} style="--delay: 0s">
+        <a data-event="game_open" class="game t-morango pop" href={url('/jogos/cuide-do-bento/')} data-label="Cuide dos dodóis do Bento" style="--delay: 0s">
           <div class="game-art" aria-hidden="true">
             <div class="mini-care">
               <Bento size={110} wave={false} />
@@ -270,7 +270,7 @@ const faq = [
           <p>Ralado, cortinho e galo: escolha o item certo e aprenda com as dicas da Tia Mari.</p>
           <span class="game-cta">Jogar <span class="arrow">→</span></span>
         </a>
-        <a class="game t-sol pop" href={url('/jogos/esconde-esconde/')} style="--delay: .12s">
+        <a data-event="game_open" class="game t-sol pop" href={url('/jogos/esconde-esconde/')} data-label="Esconde-esconde" style="--delay: .12s">
           <div class="game-art" aria-hidden="true">
             <div class="mini-bushes"><span></span><span class="ears"></span><span></span></div>
           </div>
@@ -279,7 +279,7 @@ const faq = [
           <p>O Bento se escondeu atrás de um arbusto. Será que você acha?</p>
           <span class="game-cta">Jogar <span class="arrow">→</span></span>
         </a>
-        <a class="game t-uva pop" href={url('/jogos/siga-o-bento/')} style="--delay: .24s">
+        <a data-event="game_open" class="game t-uva pop" href={url('/jogos/siga-o-bento/')} data-label="Siga o Bento" style="--delay: .24s">
           <div class="game-art" aria-hidden="true">
             <div class="mini-pads">
               <span style="--pc: #FF8FAB"><Sticker kind="heart" size={30} /></span>
