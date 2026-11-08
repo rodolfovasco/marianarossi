@@ -68,7 +68,7 @@ const jsonLd = {
     {d.alerts.length > 0 && (
       <section class="a-alert" aria-labelledby="alerta-t">
         <span class="sem-light" aria-hidden="true"></span>
-        <h2 id="alerta-t">Procure atendimento no mesmo dia se houver</h2>
+        <h2 id="alerta-t">{d.alertsTitle}</h2>
         <ul>{d.alerts.map((s) => <li>{s}</li>)}</ul>
         <p>Em emergência, ligue 192 (SAMU).</p>
       </section>
@@ -149,6 +149,9 @@ const jsonLd = {
   .prose :global(li) { margin-bottom: 6px; }
   .prose :global(li::marker) { color: var(--morango); font-weight: 800; }
   .prose :global(strong) { color: var(--ink); background: linear-gradient(transparent 60%, var(--sol-l) 60%); }
+  .prose :global(table) { width: 100%; border-collapse: separate; border-spacing: 0; margin: 8px 0 24px; font-size: 17px; border: 2px solid var(--line); border-radius: 18px; overflow: hidden; }
+  .prose :global(th) { background: var(--sol-l); text-align: left; padding: 12px 16px; font-family: var(--display); font-weight: 600; }
+  .prose :global(td) { padding: 12px 16px; border-top: 2px solid var(--line); vertical-align: top; }
   .prose :global(blockquote) { margin: 24px 0; padding: 18px 22px; border-radius: 20px; background: var(--ceu-l); color: var(--ink); }
   .a-alert { background: var(--morango-l); border: 3px solid var(--morango); color: var(--ink); border-radius: 28px; padding: 28px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 6px 0 var(--morango); }
   .a-alert .sem-light { width: 38px; height: 38px; border-radius: 50%; background: var(--morango); box-shadow: 0 0 0 7px #fff; }
