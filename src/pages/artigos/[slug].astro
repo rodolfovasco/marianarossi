@@ -45,6 +45,7 @@ const jsonLd = {
       <nav aria-label="Você está em" class="crumbs"><a href={url('/artigos/')}>Dicas da Tia Mari</a> / {d.topic}</nav>
       <span class="tag">{d.topic}</span>
       <h1 class="a-title">{d.title}</h1>
+      {d.tagline && <p class="a-tagline">{d.tagline}</p>}
       <p class="a-lead">{d.description}</p>
       <div class="a-meta">
         <span style="font-weight: 800; color: var(--ink);">Por Dra. Mariana Rossi · {site.role} · {site.crm} · {site.rqe}</span>
@@ -70,7 +71,7 @@ const jsonLd = {
         <span class="sem-light" aria-hidden="true"></span>
         <h2 id="alerta-t">{d.alertsTitle}</h2>
         <ul>{d.alerts.map((s) => <li>{s}</li>)}</ul>
-        <p>Em emergência, ligue 192 (SAMU).</p>
+        {d.emergencyNote && <p>Em emergência, ligue 192 (SAMU).</p>}
       </section>
     )}
 
@@ -136,6 +137,7 @@ const jsonLd = {
   .crumbs { font-size: 15px; font-weight: 700; color: var(--muted); }
   .crumbs a { color: var(--muted); }
   .a-title { font-size: clamp(2.2rem, 4.4vw, 3.6rem); line-height: 1.05; font-weight: 700; view-transition-name: article-title; }
+  .a-tagline { align-self: flex-start; position: relative; background: #fff; border: 3px solid var(--ink); border-radius: 22px; padding: 10px 18px; font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 19px; line-height: 1.35; color: var(--d); box-shadow: 0 4px 0 var(--ink); max-width: 640px; }
   .a-lead { font-size: 21px; color: var(--ink); line-height: 1.5; font-weight: 600; }
   .a-meta { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 15px; font-weight: 700; color: var(--muted); }
   .article { max-width: 800px; margin: 0 auto; padding: 40px 24px 32px; display: flex; flex-direction: column; gap: 24px; font-size: 19px; line-height: 1.75; }

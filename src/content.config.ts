@@ -13,6 +13,8 @@ const artigos = defineCollection({
     summary: z.array(z.string()).default([]),
     alerts: z.array(z.string()).default([]),
     alertsTitle: z.string().default('Procure atendimento no mesmo dia se houver'),
+    emergencyNote: z.boolean().default(true),
+    tagline: z.string().optional(),
     references: z.array(z.object({ label: z.string(), url: z.string().optional() })).default([]),
     draft: z.boolean().default(false),
   }),

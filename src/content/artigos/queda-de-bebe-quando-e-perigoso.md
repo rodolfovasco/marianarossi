@@ -1,13 +1,15 @@
 ---
-title: "Bebê caiu: quando é perigoso e quando dá para observar em casa"
-description: "O que fazer logo depois da queda, quais alturas preocupam mais, os sinais de alerta e como evitar que aconteça."
+title: "A Sapeca da Queda: quando o tombo é perigoso e como deixar a casa segura"
+description: "O que fazer logo depois da queda, quais alturas preocupam, os sinais de alerta e um checklist para proteger a casa de quedas e outros acidentes."
 topic: "Urgência ou consulta?"
 date: 2026-11-17
+updated: 2026-11-20
+tagline: "A Sapeca da Queda adora um segundinho de distração. Bora deixar a casa à prova de tombo?"
 summary:
   - "A maioria das quedas de bebês é de pouca altura e não deixa consequência, mas as primeiras 24 a 48 horas pedem atenção."
   - "Antes dos 2 anos, queda de mais de 90 cm (como do colo de um adulto em pé) merece avaliação médica."
   - "A criança pode dormir depois da queda. Não precisa acordar de hora em hora, mas ao acordar ela deve agir como sempre."
-  - "Vômitos repetidos, sonolência fora do normal, choro inconsolável ou moleira estufada: procure atendimento."
+  - "Prevenir é o melhor remédio: nunca deixe o bebê sozinho em lugar alto, nem por um segundinho."
 alertsTitle: "Procure atendimento imediatamente se houver"
 alerts:
   - "Perda de consciência, mesmo que por poucos segundos"
@@ -26,15 +28,15 @@ references:
   - label: "Kuppermann N, et al. Identification of children at very low risk of clinically-important brain injuries after head trauma (PECARN). The Lancet, 2009."
 ---
 
-Todo pai e toda mãe passa por isso um dia: um segundo de distração e o bebê rola do trocador, escorrega do sofá ou cai do colo. O coração dispara, e a primeira pergunta é sempre a mesma: **"será que foi grave?"**
+Conheça a **Sapeca da Queda**. Ela não marca hora: espera um segundinho de distração para fazer o bebê rolar do trocador, escorregar do sofá ou escapar do colo. O coração dispara, e a pergunta é sempre a mesma: **"será que foi grave?"**
 
-A boa notícia é que a maioria das quedas de bebês é de pouca altura e não deixa nenhuma consequência. Mas existem sinais que pedem atendimento, e é isso que você precisa saber reconhecer.
+A boa notícia é que a maioria das quedas de bebês é de pouca altura e não deixa nenhuma consequência. Mas existem sinais que pedem atendimento, e é isso que você precisa saber reconhecer. E, melhor ainda, dá para deixar a casa bem mais difícil para essa sapeca.
 
 ## Por que bebê sempre cai de cabeça?
 
 A cabeça do bebê é grande e pesada em relação ao resto do corpo. Por isso, quando ele cai, quase sempre é a cabeça que chega primeiro ao chão. Isso explica o susto (e o galo), mas não significa que toda batida na cabeça seja perigosa.
 
-## O que fazer logo depois da queda
+## Caiu! O que fazer logo depois
 
 1. **Respire e acolha.** Pegue o bebê com calma e veja se ele chora, se mexe braços e pernas e se reage a você. Um choro forte logo depois da queda costuma ser um bom sinal.
 2. **Se ele desmaiar, convulsionar ou não se mexer direito, ligue 192 (SAMU).** Nesses casos, evite movimentar a criança de forma brusca.
@@ -64,11 +66,23 @@ Quando a queda foi de pouca altura e o bebê está bem, dá para observar em cas
 
 Na dúvida, procure o pediatra. Você conhece seu filho melhor do que ninguém, e o seu "tem alguma coisa estranha" merece ser ouvido.
 
-## Como evitar as quedas
+## Checklist anti-Sapeca: quedas
 
 - **Nunca deixe o bebê sozinho** no trocador, na cama ou no sofá, nem "só por um segundinho". Bebês rolam antes do que a gente imagina.
 - **Bebê-conforto vai no chão,** nunca em cima de mesa, bancada ou cama.
-- **Grades de proteção** em janelas e escadas, assim que ele começar a se mover.
+- **Telas ou grades em todas as janelas** e portões nas escadas, assim que ele começar a se mover.
+- **Móveis presos na parede:** estante, cômoda e TV podem tombar quando a criança tenta escalar.
+- **Nada de cadeira ou banquinho perto da janela ou da sacada.** Criança escala tudo.
 - **Evite o andador:** ele aumenta o risco de quedas, principalmente em escadas.
-- **Cadeirinha certa no carro,** de acordo com a idade e o peso, sempre.
 - **No parquinho, olho no pequeno:** escorregador e trepa-trepa são a próxima fase das quedas.
+
+## A Sapeca também tem primos
+
+Quedas são o acidente mais comum, mas não o único. Aproveite a vistoria para checar:
+
+- **Cozinha:** cabo das panelas virado para dentro e criança longe do fogão e do forno.
+- **Água:** nunca deixe a criança sozinha na banheira, perto de baldes ou da piscina. Afogamento é rápido e silencioso.
+- **Engasgo:** moedas, baterias de botão, ímãs, tampinhas e peças pequenas fora do alcance.
+- **Remédios e produtos de limpeza:** trancados ou no alto, nas embalagens originais.
+- **Tomadas e fios:** protetores nas tomadas e fios longe das mãozinhas.
+- **Carro:** cadeirinha certa para a idade e o peso, em todo trajeto, até os curtinhos.
